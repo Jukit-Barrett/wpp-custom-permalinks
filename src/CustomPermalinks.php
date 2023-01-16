@@ -2,6 +2,7 @@
 
 namespace Mrzkit\WppCustomPermalinks;
 
+use Mrzkit\WppCustomPermalinks\Admin\CustomPermalinksAdmin;
 use Mrzkit\WppCustomPermalinks\Admin\CustomPermalinksUpdates;
 
 class CustomPermalinks
@@ -49,6 +50,8 @@ class CustomPermalinks
 //        include_once CUSTOM_PERMALINKS_PATH . 'admin/class-custom-permalinks-post-types-table.php';
 //        include_once CUSTOM_PERMALINKS_PATH . 'admin/class-custom-permalinks-taxonomies.php';
 //        include_once CUSTOM_PERMALINKS_PATH . 'admin/class-custom-permalinks-taxonomies-table.php';
+
+        new CustomPermalinksAdmin();
 
         $cp_form = new CustomPermalinksForm();
         $cp_form->init();

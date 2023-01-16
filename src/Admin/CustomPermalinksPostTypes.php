@@ -5,12 +5,8 @@ namespace Mrzkit\WppCustomPermalinks\Admin;
 class CustomPermalinksPostTypes
 {
     /**
-     * Returns the count of records in the database.
-     *
-     * @return null|int
-     * @since 2.0.0
-     * @access public
-     *
+     * @desc 返回数据库中的记录数
+     * @return false|mixed|string|null
      */
     public static function total_permalinks()
     {
@@ -56,15 +52,10 @@ class CustomPermalinksPostTypes
     }
 
     /**
-     * Retrieve permalink's data from the database.
-     *
-     * @param int $per_page Maximum Results needs to be shown on the page.
-     * @param int $page_number Current page.
-     *
-     * @return array Title, Post Type and Permalink set using this plugin.
-     * @since 2.0.0
-     * @access public
-     *
+     * @desc 从数据库中检索永久链接的数据
+     * @param int $per_page 每页数
+     * @param int $page_number 当前页
+     * @return array|false|mixed|object|\stdClass[]|null
      */
     public static function get_permalinks($per_page = 20, $page_number = 1)
     {

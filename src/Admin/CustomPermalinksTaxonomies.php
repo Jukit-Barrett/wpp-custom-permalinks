@@ -4,16 +4,12 @@ namespace Mrzkit\WppCustomPermalinks\Admin;
 
 class CustomPermalinksTaxonomies
 {
+
     /**
-     * Sort the terms array in desc order using term id.
-     *
-     * @param int $comp1 Value 1.
-     * @param int $comp2 Value 2.
-     *
+     * @desc 使用 term id 按 desc 顺序对 terms 数组进行排序
+     * @param int $comp1
+     * @param int $comp2
      * @return int
-     * @since 1.2.0
-     * @access public
-     *
      */
     public static function sort_array($comp1, $comp2)
     {
@@ -21,12 +17,8 @@ class CustomPermalinksTaxonomies
     }
 
     /**
-     * Returns the count of records in the database.
-     *
-     * @return null|int
-     * @since 2.0.0
-     * @access public
-     *
+     * @desc 返回数据库中的记录数
+     * @return false|int|mixed
      */
     public static function total_permalinks()
     {
@@ -62,15 +54,10 @@ class CustomPermalinksTaxonomies
     }
 
     /**
-     * Retrieve permalink's data from the database.
-     *
-     * @param int $per_page Maximum Results needs to be shown on the page.
-     * @param int $page_number Current page.
-     *
-     * @return array Title, Post Type and Permalink set using this plugin.
-     * @since 2.0.0
-     * @access public
-     *
+     * @desc 从数据库中检索永久链接的数据
+     * @param int $per_page
+     * @param int $page_number
+     * @return array|mixed
      */
     public static function get_permalinks($per_page = 20, $page_number = 1)
     {

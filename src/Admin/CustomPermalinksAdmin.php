@@ -5,20 +5,15 @@ namespace Mrzkit\WppCustomPermalinks\Admin;
 class CustomPermalinksAdmin
 {
     /**
-     * Css file suffix extension.
-     *
-     * @var string
+     * @var string Css 文件扩展后缀
      */
     private $css_file_suffix = '.min.css';
 
     /**
-     * Initializes WordPress hooks.
+     * 初始化 WordPress hooks
      */
     public function __construct()
     {
-        /*
-         * Css file suffix (version number with extension).
-         */
         $this->css_file_suffix = '-' . CUSTOM_PERMALINKS_VERSION . '.min.css';
 
         add_action('admin_init', array($this, 'privacy_policy'));
@@ -32,12 +27,7 @@ class CustomPermalinksAdmin
     }
 
     /**
-     * Added Pages in Menu for Settings.
-     *
-     * @return void
-     * @since 1.2.0
-     * @access public
-     *
+     * @desc 在设置菜单中添加页面
      */
     public function admin_menu()
     {
@@ -76,11 +66,11 @@ class CustomPermalinksAdmin
 
         add_action(
             'load-' . $post_permalinks_hook,
-            'Custom_Permalinks_Post_Types_Table::instance'
+            'CustomPermalinksPostTypesTable::instance'
         );
         add_action(
             'load-' . $taxonomy_permalinks_hook,
-            'Custom_Permalinks_Taxonomies_Table::instance'
+            'CustomPermalinksTaxonomiesTable::instance'
         );
         add_action(
             'admin_print_styles-' . $about_page . '',
@@ -89,52 +79,33 @@ class CustomPermalinksAdmin
     }
 
     /**
-     * Add about page style.
-     *
-     * @return void
-     * @since 2.0.0
-     * @access public
-     *
+     * @desc 添加 about 页面样式
      */
     public function add_about_style()
     {
-        wp_enqueue_style(
-            'custom-permalinks-about-style',
-            plugins_url(
-                '/assets/css/about-plugins' . $this->css_file_suffix,
-                CUSTOM_PERMALINKS_FILE
-            ),
-            array(),
-            CUSTOM_PERMALINKS_VERSION
-        );
+        // http://wordpress-test.kitgor.com/wp-content/plugins/wpp-custom-permalinks/assets/css/about-plugins-2.4.0.min.css
+
+        $pluginsUrl = plugins_url('/resources/assets/css/about-plugins' . $this->css_file_suffix, dirname(__DIR__) . '/resources/' );
+
+        wp_enqueue_style('custom-permalinks-about-style', $pluginsUrl, array(), CUSTOM_PERMALINKS_VERSION);
     }
 
     /**
-     * Calls another Function which shows the Post Types Permalinks Page.
-     *
-     * @return void
-     * @since 1.2.0
-     * @access public
-     *
+     * @desc 调用另一个显示帖子类型永久链接页面的函数
      */
     public function post_permalinks_page()
     {
-        Custom_Permalinks_Post_Types_Table::output();
+        CustomPermalinksPostTypesTable::output();
 
         add_filter('admin_footer_text', array($this, 'admin_footer_text'), 1);
     }
 
     /**
-     * Calls another Function which shows the Taxonomies Permalinks Page.
-     *
-     * @return void
-     * @since 1.2.0
-     * @access public
-     *
+     * @desc 调用另一个显示分类永久链接页面的函数
      */
     public function taxonomy_permalinks_page()
     {
-        Custom_Permalinks_Taxonomies_Table::output();
+        CustomPermalinksTaxonomiesTable::output();
 
         add_filter('admin_footer_text', array($this, 'admin_footer_text'), 1);
     }
@@ -149,19 +120,15 @@ class CustomPermalinksAdmin
      */
     public function about_plugin()
     {
-        include_once CUSTOM_PERMALINKS_PATH . 'admin/class-custom-permalinks-about.php';
+//        include_once CUSTOM_PERMALINKS_PATH . 'admin/class-custom-permalinks-about.php';
         new CustomPermalinksAbout();
 
         add_filter('admin_footer_text', array($this, 'admin_footer_text'), 1);
     }
 
     /**
-     * Add Plugin Support and Follow Message in the footer of Admin Pages.
-     *
-     * @return string Shows version, website link and twitter.
-     * @since 1.2.11
-     * @access public
-     *
+     * @desc 在管理页面的页脚添加插件支持和关注消息
+     * @return string
      */
     public function admin_footer_text()
     {
@@ -185,16 +152,9 @@ class CustomPermalinksAdmin
     }
 
     /**
-     * Add About and Premium Settings Page Link on the Plugin Page under the
-     * Plugin Name.
-     *
+     * @desc 在插件页面下添加关于和高级设置页面链接
      * @param array $links Contains the Plugin Basic Link (Activate/Deactivate/Delete).
-     *
-     * @return array Plugin Basic Links and added some customer link for Settings,
-     * Contact, and About.
-     * @since 1.2.11
-     * @access public
-     *
+     * @return mixed 插件基本链接并为设置添加了一些客户链接, Contact, and About.
      */
     public function settings_link($links)
     {
@@ -216,12 +176,7 @@ class CustomPermalinksAdmin
     }
 
     /**
-     * Add Privacy Policy about the Plugin.
-     *
-     * @return void
-     * @since 1.2.23
-     * @access public
-     *
+     * @desc 添加有关插件的隐私政策
      */
     public function privacy_policy()
     {
@@ -245,22 +200,12 @@ class CustomPermalinksAdmin
     }
 
     /**
-     * Buffer the output to allow redirection, even if the website starts to send
-     * output to the browser.
-     *
-     * @return void
-     * @since 2.4.0
-     * @access public
-     *
+     * @desc 缓冲输出以允许重定向，即使网站开始向浏览器发送输出
      */
     public function allow_redirection()
     {
-        if (isset($_REQUEST['_custom_permalinks_post_nonce'])
-            || isset($_REQUEST['_custom_permalinks_taxonomy_nonce'])
-        ) {
+        if (isset($_REQUEST['_custom_permalinks_post_nonce']) || isset($_REQUEST['_custom_permalinks_taxonomy_nonce'])) {
             ob_start();
         }
     }
 }
-
-new CustomPermalinksAdmin();

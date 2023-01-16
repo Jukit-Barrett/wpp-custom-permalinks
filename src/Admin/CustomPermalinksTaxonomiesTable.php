@@ -2,6 +2,8 @@
 
 namespace Mrzkit\WppCustomPermalinks\Admin;
 
+use Mrzkit\WppCustomPermalinks\CustomPermalinksFrontend;
+
 if ( !class_exists('WP_List_Table')) {
     include_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
@@ -12,17 +14,12 @@ if ( !class_exists('WP_List_Table')) {
 final class CustomPermalinksTaxonomiesTable extends \WP_List_Table
 {
     /**
-     * Singleton instance variable
-     *
-     * @var object
+     * @var object Singleton instance variable
      */
     private static $instance;
 
     /**
-     * Initialize the Taxonomies Permalinks table list.
-     *
-     * @since 2.0.0
-     * @access public
+     * 初始化 Taxonomies Permalinks 表列表
      */
     public function __construct()
     {
@@ -39,12 +36,8 @@ final class CustomPermalinksTaxonomiesTable extends \WP_List_Table
     }
 
     /**
-     * Singleton instance method.
-     *
-     * @return CustomPermalinksTaxonomiesTable The instance.
-     * @since 2.0.0
-     * @access public
-     *
+     * @desc Singleton instance method.
+     * @return CustomPermalinksTaxonomiesTable|object
      */
     public static function instance()
     {
@@ -56,12 +49,7 @@ final class CustomPermalinksTaxonomiesTable extends \WP_List_Table
     }
 
     /**
-     * Handle displaying and saving screen options.
-     *
-     * @return void
-     * @since 2.0.0
-     * @access private
-     *
+     * @desc 处理显示和保存屏幕选项
      */
     private function screen_options()
     {
@@ -91,12 +79,7 @@ final class CustomPermalinksTaxonomiesTable extends \WP_List_Table
     }
 
     /**
-     * No items found text.
-     *
-     * @return void
-     * @since 2.0.0
-     * @access public
-     *
+     * @desc No items found text.
      */
     public function no_items()
     {
@@ -104,12 +87,8 @@ final class CustomPermalinksTaxonomiesTable extends \WP_List_Table
     }
 
     /**
-     * Get list of columns in the form of array.
-     *
-     * @return array Column list.
-     * @since 2.0.0
-     * @access public
-     *
+     * @desc 获取数组形式的列列表
+     * @return array
      */
     public function get_columns()
     {
@@ -124,10 +103,7 @@ final class CustomPermalinksTaxonomiesTable extends \WP_List_Table
     }
 
     /**
-     * Returns the output of the page.
-     *
-     * @since 2.0.0
-     * @access public
+     * @desc 返回页面的输出
      */
     public static function output()
     {
@@ -196,12 +172,8 @@ final class CustomPermalinksTaxonomiesTable extends \WP_List_Table
     }
 
     /**
-     * Set up column headings for WP_List_Table.
-     *
-     * @return array
-     * @since 2.0.0
-     * @access protected
-     *
+     * @desc 为 WP_List_Table 设置列标题
+     * @return mixed|null
      */
     protected function get_hidden_columns()
     {
@@ -211,14 +183,9 @@ final class CustomPermalinksTaxonomiesTable extends \WP_List_Table
     }
 
     /**
-     * Render the checkbox for bulk action.
-     *
-     * @param array $item Single Item.
-     *
-     * @return string
-     * @since 2.0.0
-     * @access protected
-     *
+     * @desc 渲染批量操作的复选框
+     * @param $item
+     * @return string|void
      */
     protected function column_cb($item)
     {
@@ -229,14 +196,9 @@ final class CustomPermalinksTaxonomiesTable extends \WP_List_Table
     }
 
     /**
-     * Set up column contents for `Title`.
-     *
-     * @param array $item Single Item.
-     *
-     * @return string Post Title.
-     * @since 2.0.0
-     * @access public
-     *
+     * @desc 为 `Title` 设置列内容
+     * @param $item
+     * @return string
      */
     protected function column_title($item)
     {
@@ -270,14 +232,9 @@ final class CustomPermalinksTaxonomiesTable extends \WP_List_Table
     }
 
     /**
-     * Set up column contents for `Type`.
-     *
-     * @param array $item Single Item.
-     *
-     * @return string Taxonomy Name.
-     * @since 2.0.0
-     * @access protected
-     *
+     * @desc  为 `Type` 设置列内容
+     * @param $item
+     * @return string
      */
     protected function column_type($item)
     {
@@ -291,21 +248,16 @@ final class CustomPermalinksTaxonomiesTable extends \WP_List_Table
     }
 
     /**
-     * Set up column contents for `Permalink`.
-     *
-     * @param array $item Single Item.
-     *
-     * @return string Post Permalink.
-     * @since 2.0.0
-     * @access protected
-     *
+     * @desc 为 `Permalink` 设置列内容
+     * @param $item
+     * @return string
      */
     protected function column_permalink($item)
     {
         $permalink = '';
 
         if ($item['permalink']) {
-            $cp_frontend      = new Custom_Permalinks_Frontend();
+            $cp_frontend      = new CustomPermalinksFrontend();
             $custom_permalink = '/' . $item['permalink'];
             $home_url         = home_url();
             $taxonomy_type    = 'category';
@@ -361,12 +313,8 @@ final class CustomPermalinksTaxonomiesTable extends \WP_List_Table
     }
 
     /**
-     * Get bulk actions.
-     *
-     * @return array Available Actions.
-     * @since 2.0.0
-     * @access public
-     *
+     * @desc 获取批量操作
+     * @return array
      */
     public function get_bulk_actions()
     {
@@ -376,12 +324,7 @@ final class CustomPermalinksTaxonomiesTable extends \WP_List_Table
     }
 
     /**
-     * Process bulk actions.
-     *
-     * @return void
-     * @since 2.0.0
-     * @access public
-     *
+     * @desc 处理批量操作
      */
     public function process_bulk_action()
     {
@@ -446,14 +389,8 @@ final class CustomPermalinksTaxonomiesTable extends \WP_List_Table
     }
 
     /**
-     * Generate the table navigation above or below the table.
-     *
-     * @param string $which Table Navigation position.
-     *
-     * @return void
-     * @since 2.0.0
-     * @access protected
-     *
+     * @desc 在表格上方或下方生成表格导航
+     * @param $which
      */
     protected function display_tablenav($which)
     {
@@ -476,12 +413,7 @@ final class CustomPermalinksTaxonomiesTable extends \WP_List_Table
     }
 
     /**
-     * Prepare table list items.
-     *
-     * @return void
-     * @since 2.0.0
-     * @access public
-     *
+     * @desc 预处理表格项目
      */
     public function prepare_items()
     {
@@ -496,8 +428,8 @@ final class CustomPermalinksTaxonomiesTable extends \WP_List_Table
 
         $per_page     = $this->get_items_per_page("{$this->screen->id}_per_page");
         $current_page = $this->get_pagenum();
-        $total_items  = Custom_Permalinks_Taxonomies::total_permalinks();
-        $this->items  = Custom_Permalinks_Taxonomies::get_permalinks($per_page, $current_page);
+        $total_items  = CustomPermalinksTaxonomies::total_permalinks();
+        $this->items  = CustomPermalinksTaxonomies::get_permalinks($per_page, $current_page);
 
         $this->set_pagination_args(
             array(

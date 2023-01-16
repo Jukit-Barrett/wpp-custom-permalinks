@@ -13,5 +13,7 @@
             "email": "kitgor.architect@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "symfony/var-dumper": "^5.4"
+    }
 }
