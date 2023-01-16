@@ -31,6 +31,7 @@ class CustomPermalinksAdmin
      */
     public function admin_menu()
     {
+        // 顶级菜单: Custom Permalinks
         add_menu_page(
             'Custom Permalinks',
             'Custom Permalinks',
@@ -39,7 +40,9 @@ class CustomPermalinksAdmin
             array($this, 'post_permalinks_page'),
             'dashicons-admin-links'
         );
-        $post_permalinks_hook     = add_submenu_page(
+
+        // 菜单: Post Types Permalinks
+        $post_permalinks_hook = add_submenu_page(
             'cp-post-permalinks',
             'Post Types Permalinks',
             'Post Types Permalinks',
@@ -47,6 +50,8 @@ class CustomPermalinksAdmin
             'cp-post-permalinks',
             array($this, 'post_permalinks_page')
         );
+
+        // 菜单: Taxonomies Permalinks
         $taxonomy_permalinks_hook = add_submenu_page(
             'cp-post-permalinks',
             'Taxonomies Permalinks',
@@ -55,7 +60,9 @@ class CustomPermalinksAdmin
             'cp-taxonomy-permalinks',
             array($this, 'taxonomy_permalinks_page')
         );
-        $about_page               = add_submenu_page(
+
+        // 菜单: About
+        $about_page = add_submenu_page(
             'cp-post-permalinks',
             'About Custom Permalinks',
             'About',
@@ -66,11 +73,12 @@ class CustomPermalinksAdmin
 
         add_action(
             'load-' . $post_permalinks_hook,
-            'CustomPermalinksPostTypesTable::instance'
+            [CustomPermalinksPostTypesTable::class, 'instance']
         );
         add_action(
             'load-' . $taxonomy_permalinks_hook,
-            'CustomPermalinksTaxonomiesTable::instance'
+            [CustomPermalinksPostTypesTable::class, 'instance']
+
         );
         add_action(
             'admin_print_styles-' . $about_page . '',
@@ -85,7 +93,7 @@ class CustomPermalinksAdmin
     {
         // http://wordpress-test.kitgor.com/wp-content/plugins/wpp-custom-permalinks/assets/css/about-plugins-2.4.0.min.css
 
-        $pluginsUrl = plugins_url('/resources/assets/css/about-plugins' . $this->css_file_suffix, dirname(__DIR__) . '/resources/' );
+        $pluginsUrl = plugins_url('/resources/assets/css/about-plugins' . $this->css_file_suffix, dirname(__DIR__) . '/resources/');
 
         wp_enqueue_style('custom-permalinks-about-style', $pluginsUrl, array(), CUSTOM_PERMALINKS_VERSION);
     }
