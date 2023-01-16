@@ -1,0 +1,17 @@
+{
+    "name": "mrzkit/wpp-custom-permalinks",
+    "type": "library",
+    "license": "GPLv3 or later",
+    "autoload": {
+        "psr-4": {
+            "Mrzkit\\WppCustomPermalinks\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "shijie.zhu",
+            "email": "kitgor.architect@gmail.com"
+        }
+    ],
+    "require": {}
+}
