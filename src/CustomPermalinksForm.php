@@ -69,21 +69,15 @@ class CustomPermalinksForm
      */
     private function exclude_custom_permalinks($post)
     {
-        $args               = array(
-            'public' => true,
-        );
-        $exclude_post_types = apply_filters(
-            'custom_permalinks_exclude_post_type',
-            $post->post_type
-        );
+        $args = array('public' => true,);
+
+        $exclude_post_types = apply_filters('custom_permalinks_exclude_post_type', $post->post_type);
 
         /*
          * Exclude custom permalink `form` from any post(s) if filter returns `true`.
          */
-        $exclude_posts     = apply_filters(
-            'custom_permalinks_exclude_posts',
-            $post
-        );
+        $exclude_posts = apply_filters('custom_permalinks_exclude_posts', $post);
+
         $public_post_types = get_post_types($args, 'objects');
 
         if (isset($this->permalink_metabox) && 1 === $this->permalink_metabox) {
@@ -492,17 +486,14 @@ class CustomPermalinksForm
     public function meta_edit_form($post)
     {
         $disable_cp = $this->exclude_custom_permalinks($post);
+
         if ($disable_cp) {
-            wp_enqueue_script(
-                'custom-permalinks-form',
-                plugins_url(
-                    '/assets/js/script-form' . $this->js_file_suffix,
-                    CUSTOM_PERMALINKS_FILE
-                ),
-                array(),
-                CUSTOM_PERMALINKS_VERSION,
-                true
-            );
+
+            $plugin = __FILE__;
+
+            $url = plugins_url('/resources/assets/js/script-form' . $this->js_file_suffix, $plugin);
+
+            wp_enqueue_script('custom-permalinks-form', $url, array(), CUSTOM_PERMALINKS_VERSION, true);
 
             return;
         }
@@ -610,16 +601,12 @@ class CustomPermalinksForm
             $original_encoded_url = $post_slug;
         }
 
-        wp_enqueue_script(
-            'custom-permalinks-form',
-            plugins_url(
-                '/assets/js/script-form' . $this->js_file_suffix,
-                CUSTOM_PERMALINKS_FILE
-            ),
-            array(),
-            CUSTOM_PERMALINKS_VERSION,
-            true
-        );
+        $plugin = __FILE__;
+
+        $pluginsUrl = plugins_url('/resources/assets/js/script-form' . $this->js_file_suffix, $plugin);
+
+        wp_enqueue_script('custom-permalinks-form', $pluginsUrl, array(), CUSTOM_PERMALINKS_VERSION, true );
+
         $postname_html = '';
         if (isset($postname) && '' !== $postname) {
             $postname_html = '<input type="hidden" id="new-post-slug" class="text" value="' . $postname . '" />';

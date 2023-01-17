@@ -70,8 +70,7 @@ class CustomPermalinksFrontend
     public function remove_double_slash($permalink = '')
     {
         $protocol = '';
-        if (0 === strpos($permalink, 'http://') || 0 === strpos($permalink, 'https://')
-        ) {
+        if (0 === strpos($permalink, 'http://') || 0 === strpos($permalink, 'https://')) {
             $split_protocol = explode('://', $permalink);
             if (1 < count($split_protocol)) {
                 $protocol  = $split_protocol[0] . '://';
@@ -79,7 +78,9 @@ class CustomPermalinksFrontend
             }
         }
 
+        // 双斜线替换单斜线
         $permalink = str_replace('//', '/', $permalink);
+
         $permalink = $protocol . $permalink;
 
         return $permalink;
@@ -96,11 +97,7 @@ class CustomPermalinksFrontend
         $custom_permalink   = $permalink;
         $trailing_permalink = trailingslashit(home_url()) . $custom_permalink;
         if ($language_code) {
-            $permalink = apply_filters(
-                'wpml_permalink',
-                $trailing_permalink,
-                $language_code
-            );
+            $permalink = apply_filters('wpml_permalink', $trailing_permalink, $language_code);
             $site_url  = site_url();
             $wpml_href = str_replace($site_url, '', $permalink);
             if (0 === strpos($wpml_href, '//')) {
@@ -109,6 +106,11 @@ class CustomPermalinksFrontend
                 }
             }
         } else {
+            /**
+             * 过滤WordPress永久链接，并根据WPML语言设置中设置的语言URL格式将其转换为特定于语言的永久链接。
+             * 这意味着当“语言URL格式”设置为“目录中的不同语言”时，永久链接将以http://domain.com/de形式返回。
+             * 当选择“每种语言不同的域”时，永久链接将被转换为包含分配给所请求语言的正确域。
+             */
             $permalink = apply_filters('wpml_permalink', $trailing_permalink);
         }
 
@@ -628,6 +630,7 @@ class CustomPermalinksFrontend
      */
     public function custom_post_link($permalink, $post)
     {
+        // 获取 custom_permalink 数据
         $custom_permalink = get_post_meta($post->ID, 'custom_permalink', true);
         if ($custom_permalink) {
             $post_type = 'post';
@@ -635,6 +638,7 @@ class CustomPermalinksFrontend
                 $post_type = $post->post_type;
             }
 
+            //获取可翻译元素的语言代码
             $language_code = apply_filters(
                 'wpml_element_language_code',
                 null,
