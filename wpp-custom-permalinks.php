@@ -41,8 +41,4 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require __DIR__ . '/vendor/autoload.php';
 
-if ( ! defined( 'CUSTOM_PERMALINKS_FILE' ) ) {
-    define( 'CUSTOM_PERMALINKS_FILE', __FILE__ );
-}
-
-new \Mrzkit\WppCustomPermalinks\CustomPermalinks();
+new \Mrzkit\WppCustomPermalinks\CustomPermalinks(__FILE__);

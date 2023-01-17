@@ -792,8 +792,7 @@ class CustomPermalinksFrontend
         remove_filter('post_link', array($this, 'custom_post_link'));
         remove_filter('post_type_link', array($this, 'custom_post_link'));
 
-        $post_file_path = ABSPATH . '/wp-admin/includes/post.php';
-        include_once $post_file_path;
+        include_once ABSPATH . '/wp-admin/includes/post.php';
 
         list($permalink, $post_name) = get_sample_permalink($post_id);
         $permalink = str_replace(
@@ -822,8 +821,7 @@ class CustomPermalinksFrontend
             array($this, 'custom_trailingslash')
         );
 
-        $post_file_path = ABSPATH . '/wp-admin/includes/post.php';
-        include_once $post_file_path;
+        include_once ABSPATH . '/wp-admin/includes/post.php';
 
         list($permalink, $post_name) = get_sample_permalink($post_id);
         $permalink = str_replace(

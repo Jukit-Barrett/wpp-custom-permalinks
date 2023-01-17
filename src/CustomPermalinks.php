@@ -11,8 +11,15 @@ class CustomPermalinks
      */
     public $version = '2.4.0';
 
-    public function __construct()
+    /**
+     * @var string 入口文件
+     */
+    protected $intoFile;
+
+    public function __construct($intoFile)
     {
+        $this->intoFile = $intoFile;
+
         $this->define_constants();
         $this->includes();
         $this->init_hooks();
@@ -23,6 +30,12 @@ class CustomPermalinks
      */
     private function define_constants()
     {
+        if ( !defined('CUSTOM_PERMALINKS_FILE')) {
+            define('CUSTOM_PERMALINKS_FILE', $this->intoFile);
+        }
+        if ( !defined('CUSTOM_PERMALINKS_BASENAME')) {
+            define('CUSTOM_PERMALINKS_BASENAME', plugin_basename(CUSTOM_PERMALINKS_FILE));
+        }
         if ( !defined('CUSTOM_PERMALINKS_BASENAME')) {
             define('CUSTOM_PERMALINKS_BASENAME', plugin_basename(CUSTOM_PERMALINKS_FILE));
         }
@@ -39,7 +52,6 @@ class CustomPermalinks
      */
     private function includes()
     {
-
         new CustomPermalinksAdmin();
 
         $cp_form = new CustomPermalinksForm();

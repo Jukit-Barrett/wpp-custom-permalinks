@@ -338,12 +338,12 @@ class CustomPermalinksForm
             return;
         }
 
-        $cp_frontend   = new CustomPermalinksFrontend();
+        $cp_frontend = new CustomPermalinksFrontend();
+        // 原始文章链接
         $original_link = $cp_frontend->original_post_link($post_id);
 
-        if ( !empty($_REQUEST['custom_permalink'])
-             && $_REQUEST['custom_permalink'] !== $original_link
-        ) {
+        if ( !empty($_REQUEST['custom_permalink']) && $_REQUEST['custom_permalink'] !== $original_link) {
+            // 回调
             $language_code = apply_filters(
                 'wpml_element_language_code',
                 null,
@@ -353,17 +353,17 @@ class CustomPermalinksForm
                 )
             );
 
+            // 安全清洗
             $permalink = $this->sanitize_permalink(
             // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
                 $_REQUEST['custom_permalink'],
                 $language_code
             );
-            $permalink = apply_filters(
-                'custom_permalink_before_saving',
-                $permalink,
-                $post_id
-            );
 
+            // custom permalink 自己提供的勾子
+            $permalink = apply_filters('custom_permalink_before_saving', $permalink, $post_id);
+
+            // 更新
             update_post_meta($post_id, 'custom_permalink', $permalink);
         }
     }
@@ -396,28 +396,20 @@ class CustomPermalinksForm
             $original_permalink = $cp_frontend->original_page_link($post_id);
             $view_post          = __('View Page', 'custom-permalinks');
         } else {
-            $post_type_name   = '';
+            $post_type_name = '';
+            // 获取文章类型对象 WP_Post_Type
             $post_type_object = get_post_type_object($post->post_type);
-            if (is_object($post_type_object) && isset($post_type_object->labels)
-                && isset($post_type_object->labels->singular_name)
-            ) {
+            if (is_object($post_type_object) && isset($post_type_object->labels) && isset($post_type_object->labels->singular_name)) {
                 $post_type_name = ' ' . $post_type_object->labels->singular_name;
-            } elseif (is_object($post_type_object)
-                      && isset($post_type_object->label)
-            ) {
+            } elseif (is_object($post_type_object) && isset($post_type_object->label)) {
                 $post_type_name = ' ' . $post_type_object->label;
             }
 
             $original_permalink = $cp_frontend->original_post_link($post_id);
             $view_post          = __('View', 'custom-permalinks') . $post_type_name;
         }
-        $this->get_permalink_form(
-            $permalink,
-            $original_permalink,
-            $post_id,
-            false,
-            $post->post_name
-        );
+
+        $this->get_permalink_form($permalink, $original_permalink, $post_id, false, $post->post_name);
 
         $content = ob_get_contents();
         ob_end_clean();
@@ -427,9 +419,7 @@ class CustomPermalinksForm
             if (isset($permalink) && !empty($permalink)) {
                 $view_post_link = $home_url . $permalink;
             } else {
-                if ('draft' === $post->post_status
-                    || 'pending' === $post->post_status
-                ) {
+                if ('draft' === $post->post_status || 'pending' === $post->post_status) {
                     $view_post      = 'Preview';
                     $view_post_link = $home_url . '?';
                     if ('page' === $post->post_type) {
@@ -466,8 +456,10 @@ class CustomPermalinksForm
     {
         $post = get_post($post_id);
 
-        $disable_cp              = $this->exclude_custom_permalinks($post);
+        $disable_cp = $this->exclude_custom_permalinks($post);
+
         $this->permalink_metabox = 1;
+
         if ($disable_cp) {
             return $html;
         }
@@ -488,7 +480,6 @@ class CustomPermalinksForm
         $disable_cp = $this->exclude_custom_permalinks($post);
 
         if ($disable_cp) {
-
             $plugin = __FILE__;
 
             $url = plugins_url('/resources/assets/js/script-form' . $this->js_file_suffix, $plugin);
@@ -524,9 +515,7 @@ class CustomPermalinksForm
             $cp_frontend = new CustomPermalinksFrontend();
             if ($tag->term_id) {
                 $permalink          = $cp_frontend->term_permalink($tag->term_id);
-                $original_permalink = $cp_frontend->original_term_link(
-                    $tag->term_id
-                );
+                $original_permalink = $cp_frontend->original_term_link($tag->term_id);
             }
 
             $this->get_permalink_form($permalink, $original_permalink, $tag->term_id);
@@ -559,23 +548,15 @@ class CustomPermalinksForm
      */
     private function get_permalink_form($permalink, $original, $id, $render_containers = true, $postname = '')
     {
+        // 自定义的固定链接
         $encoded_permalink = htmlspecialchars(urldecode($permalink));
-        $home_url          = trailingslashit(home_url());
+        // 网站地址
+        $home_url = trailingslashit(home_url());
 
         if ($render_containers) {
-            wp_nonce_field(
-                'custom-permalinks_' . $id,
-                '_custom_permalinks_term_nonce',
-                false,
-                true
-            );
+            wp_nonce_field('custom-permalinks_' . $id, '_custom_permalinks_term_nonce', false, true);
         } else {
-            wp_nonce_field(
-                'custom-permalinks_' . $id,
-                '_custom_permalinks_post_nonce',
-                false,
-                true
-            );
+            wp_nonce_field('custom-permalinks_' . $id, '_custom_permalinks_post_nonce', false, true);
         }
 
         // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -605,7 +586,7 @@ class CustomPermalinksForm
 
         $pluginsUrl = plugins_url('/resources/assets/js/script-form' . $this->js_file_suffix, $plugin);
 
-        wp_enqueue_script('custom-permalinks-form', $pluginsUrl, array(), CUSTOM_PERMALINKS_VERSION, true );
+        wp_enqueue_script('custom-permalinks-form', $pluginsUrl, array(), CUSTOM_PERMALINKS_VERSION, true);
 
         $postname_html = '';
         if (isset($postname) && '' !== $postname) {
