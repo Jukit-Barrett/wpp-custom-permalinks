@@ -12,7 +12,7 @@ class CustomPermalinksAdmin
     /**
      * 初始化 WordPress hooks
      */
-    public function __construct()
+    public function init()
     {
         $this->css_file_suffix = '-' . CUSTOM_PERMALINKS_VERSION . '.min.css';
 

@@ -52,7 +52,8 @@ class CustomPermalinks
      */
     private function includes()
     {
-        new CustomPermalinksAdmin();
+        $cp_admin = new CustomPermalinksAdmin();
+        $cp_admin->init();
 
         $cp_form = new CustomPermalinksForm();
         $cp_form->init();
