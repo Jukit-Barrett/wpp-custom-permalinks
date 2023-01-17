@@ -61,6 +61,7 @@ class CustomPermalinksTaxonomies
      */
     public static function get_permalinks($per_page = 20, $page_number = 1)
     {
+        // 获取缓存
         $taxonomies = wp_cache_get('taxonomies_results', 'custom_permalinks');
         if ( !$taxonomies) {
             $page_offset     = ($page_number - 1) * $per_page;
@@ -85,7 +86,7 @@ class CustomPermalinksTaxonomies
                 }
                 // phpcs:enable WordPress.Security.NonceVerification.Recommended
 
-                uasort($all_taxonomies, array('Custom_Permalinks_Taxonomies', 'sort_array'));
+                uasort($all_taxonomies, array(CustomPermalinksTaxonomies::class, 'sort_array'));
                 $pager_limit = -1;
                 $skip_count  = -1;
                 foreach ($all_taxonomies as $permalink => $info) {

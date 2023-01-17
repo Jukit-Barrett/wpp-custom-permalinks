@@ -2,6 +2,7 @@
 
 namespace Mrzkit\WppCustomPermalinks\Admin;
 
+use Mrzkit\WppCustomPermalinks\CustomPermalinksForm;
 use Mrzkit\WppCustomPermalinks\CustomPermalinksFrontend;
 
 if ( !class_exists('WP_List_Table')) {
@@ -350,7 +351,7 @@ final class CustomPermalinksTaxonomiesTable extends \WP_List_Table
                     && is_array($del_permalinks)
                     && 0 < count($del_permalinks)
                 ) {
-                    $cp_form = new Custom_Permalinks_Form();
+                    $cp_form = new CustomPermalinksForm();
                     foreach ($del_permalinks as $term_id) {
                         if (is_numeric($term_id)) {
                             $cp_form->delete_term_permalink($term_id);

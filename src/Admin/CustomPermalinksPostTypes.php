@@ -14,12 +14,6 @@ class CustomPermalinksPostTypes
 
         $total_posts = wp_cache_get('total_posts_result', 'custom_permalinks');
         if ( !$total_posts) {
-            $sql_query = "
-				SELECT COUNT(p.ID) FROM $wpdb->posts AS p
-				LEFT JOIN $wpdb->postmeta AS pm ON (p.ID = pm.post_id)
-				WHERE pm.meta_key = 'custom_permalink' AND pm.meta_value != ''
-			";
-
             // phpcs:disable WordPress.Security.NonceVerification.Recommended
             // Include search in total results.
             if (isset($_REQUEST['s']) && !empty($_REQUEST['s'])) {
@@ -65,7 +59,6 @@ class CustomPermalinksPostTypes
         if ( !$posts) {
             $page_offset = ($page_number - 1) * $per_page;
             $order_by    = 'p.ID';
-            $order       = null;
 
             // phpcs:disable WordPress.Security.NonceVerification.Recommended
             // Sort the items.
