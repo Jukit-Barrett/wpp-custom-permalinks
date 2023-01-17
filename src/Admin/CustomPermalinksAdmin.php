@@ -7,7 +7,7 @@ class CustomPermalinksAdmin
     /**
      * @var string Css 文件扩展后缀
      */
-    private $css_file_suffix = '.min.css';
+    private $css_file_suffix;
 
     /**
      * 初始化 WordPress hooks
@@ -16,14 +16,14 @@ class CustomPermalinksAdmin
     {
         $this->css_file_suffix = '-' . CUSTOM_PERMALINKS_VERSION . '.min.css';
 
+        // 在管理屏幕或脚本初始化时触发
         add_action('admin_init', array($this, 'privacy_policy'));
+        // 在管理员中加载管理菜单之前触发
         add_action('admin_menu', array($this, 'admin_menu'));
+        // 在 WordPress 完成加载后但在发送任何标头之前触发
         add_action('init', array($this, 'allow_redirection'));
-
-        add_filter(
-            'plugin_action_links_' . CUSTOM_PERMALINKS_BASENAME,
-            array($this, 'settings_link')
-        );
+        // 在插件页面下添加关于和高级设置页面链接
+        add_filter('plugin_action_links_' . CUSTOM_PERMALINKS_BASENAME, array($this, 'settings_link'));
     }
 
     /**
@@ -71,19 +71,11 @@ class CustomPermalinksAdmin
             array($this, 'about_plugin')
         );
 
-        add_action(
-            'load-' . $post_permalinks_hook,
-            [CustomPermalinksPostTypesTable::class, 'instance']
-        );
-        add_action(
-            'load-' . $taxonomy_permalinks_hook,
-            [CustomPermalinksPostTypesTable::class, 'instance']
+        add_action('load-' . $post_permalinks_hook, [CustomPermalinksPostTypesTable::class, 'instance']);
 
-        );
-        add_action(
-            'admin_print_styles-' . $about_page . '',
-            array($this, 'add_about_style')
-        );
+        add_action('load-' . $taxonomy_permalinks_hook, [CustomPermalinksPostTypesTable::class, 'instance']);
+
+        add_action('admin_print_styles-' . $about_page . '', array($this, 'add_about_style'));
     }
 
     /**
@@ -91,8 +83,6 @@ class CustomPermalinksAdmin
      */
     public function add_about_style()
     {
-        // http://wordpress-test.kitgor.com/wp-content/plugins/wpp-custom-permalinks/assets/css/about-plugins-2.4.0.min.css
-
         $pluginsUrl = plugins_url('/resources/assets/css/about-plugins' . $this->css_file_suffix, dirname(__DIR__) . '/resources/');
 
         wp_enqueue_style('custom-permalinks-about-style', $pluginsUrl, array(), CUSTOM_PERMALINKS_VERSION);
@@ -105,6 +95,7 @@ class CustomPermalinksAdmin
     {
         CustomPermalinksPostTypesTable::output();
 
+        // 过滤管理页脚中显示的 "Thank you" 文本
         add_filter('admin_footer_text', array($this, 'admin_footer_text'), 1);
     }
 
@@ -115,6 +106,7 @@ class CustomPermalinksAdmin
     {
         CustomPermalinksTaxonomiesTable::output();
 
+        // 过滤管理页脚中显示的 "Thank you" 文本
         add_filter('admin_footer_text', array($this, 'admin_footer_text'), 1);
     }
 
@@ -128,9 +120,9 @@ class CustomPermalinksAdmin
      */
     public function about_plugin()
     {
-//        include_once CUSTOM_PERMALINKS_PATH . 'admin/class-custom-permalinks-about.php';
         new CustomPermalinksAbout();
 
+        // 过滤管理页脚中显示的 "Thank you" 文本
         add_filter('admin_footer_text', array($this, 'admin_footer_text'), 1);
     }
 
@@ -162,19 +154,17 @@ class CustomPermalinksAdmin
     /**
      * @desc 在插件页面下添加关于和高级设置页面链接
      * @param array $links Contains the Plugin Basic Link (Activate/Deactivate/Delete).
-     * @return mixed 插件基本链接并为设置添加了一些客户链接, Contact, and About.
+     * @return mixed
      */
     public function settings_link($links)
     {
-        $about_link   = '<a href="admin.php?page=cp-about-plugins" target="_blank">' .
-                        __('About', 'custom-permalinks') .
-                        '</a>';
-        $support_link = '<a href="https://www.custompermalinks.com/#pricing-section" target="_blank">' .
-                        __('Premium Support', 'custom-permalinks') .
-                        '</a>';
-        $contact_link = '<a href="https://www.custompermalinks.com/contact-us/" target="_blank">' .
-                        __('Contact', 'custom-permalinks') .
-                        '</a>';
+        $links = (array) $links;
+
+        $about_link = '<a href="admin.php?page=cp-about-plugins" target="_blank">' . __('About', 'custom-permalinks') . '</a>';
+
+        $support_link = '<a href="https://www.custompermalinks.com/#pricing-section" target="_blank">' . __('Premium Support', 'custom-permalinks') . '</a>';
+
+        $contact_link = '<a href="https://www.custompermalinks.com/contact-us/" target="_blank">' . __('Contact', 'custom-permalinks') . '</a>';
 
         array_unshift($links, $contact_link);
         array_unshift($links, $support_link);
@@ -196,15 +186,16 @@ class CustomPermalinksAdmin
             'This plugin collect information about the site like URL, WordPress version etc. This plugin doesn\'t collect any user related information. To have any kind of further query please feel free to',
             'custom-permalinks'
         );
-        $cp_privacy = $cp_privacy .
-                      ' <a href="https://www.custompermalinks.com/contact-us/" target="_blank">' .
-                      esc_html__('contact us', 'custom-permalinks') .
-                      '</a>';
+        $cp_privacy = $cp_privacy . ' <a href="https://www.custompermalinks.com/contact-us/" target="_blank">' . esc_html__('contact us', 'custom-permalinks') . '</a>';
 
-        wp_add_privacy_policy_content(
-            'Custom Permalinks',
-            wp_kses_post(wpautop($cp_privacy, false))
-        );
+        // Replaces double line breaks with paragraph elements
+        $autop = wpautop($cp_privacy, false);
+
+        // Sanitizes content for allowed HTML tags for post content
+        $ksesPost = wp_kses_post($autop);
+
+        // 声明用于向隐私政策指南添加内容的辅助函数
+        wp_add_privacy_policy_content('Custom Permalinks', $ksesPost);
     }
 
     /**

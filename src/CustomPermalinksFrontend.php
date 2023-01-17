@@ -8,40 +8,27 @@ namespace Mrzkit\WppCustomPermalinks;
 class CustomPermalinksFrontend
 {
     /**
-     * Make it `true` when `parse_request()` succeeded to make performance better.
-     *
-     * @var bool
+     * @var bool 当 `parse_request()` 成功时将其设置为 `true` 以提高性能
      */
     private $parse_request_status = false;
 
     /**
-     * The query string, if any, via which the page is accessed otherwise empty.
-     *
-     * @var string
+     * @var string 访问页面的查询字符串（如果有），否则为空
      */
     private $query_string_uri = '';
 
     /**
-     * Preserve the URL for later use in parse_request.
-     *
-     * @var string
+     * @var string 保留 URL 供以后在 parse_request 中使用
      */
     private $registered_url = '';
 
     /**
-     * The URI which is given in order to access this page. Default empty.
-     *
-     * @var string
+     * @var string 为访问此页面而提供的 URI。 默认为空
      */
     private $request_uri = '';
 
     /**
-     * Initialize WordPress Hooks.
-     *
-     * @return void
-     * @since 1.2.0
-     * @access public
-     *
+     * @desc Initialize WordPress Hooks
      */
     public function init()
     {
@@ -55,16 +42,22 @@ class CustomPermalinksFrontend
             $this->request_uri = $_SERVER['REQUEST_URI'];
         }
 
+        // 在确定加载哪个模板之前触发
         add_action('template_redirect', array($this, 'make_redirect'), 5);
-
+        // 过滤已解析查询变量的数组
         add_filter('request', array($this, 'parse_request'));
+        // Filters the determined post ID
         add_filter('oembed_request_post_id', array($this, 'oembed_request'), 10, 2);
+        // Filters the permalink for a post
         add_filter('post_link', array($this, 'custom_post_link'), 10, 2);
+        // Filters the permalink for a post of a custom post type
         add_filter('post_type_link', array($this, 'custom_post_link'), 10, 2);
+        // Filters the permalink for a page
         add_filter('page_link', array($this, 'custom_page_link'), 10, 2);
+        // Filters the term link
         add_filter('term_link', array($this, 'custom_term_link'), 10, 2);
+        // 如果站点设置为添加尾部斜线，则检索尾部斜线字符串
         add_filter('user_trailingslashit', array($this, 'custom_trailingslash'));
-
         // WPSEO Filters.
         add_filter('wpseo_canonical', array($this, 'fix_canonical_double_slash'), 20, 1);
     }

@@ -36,20 +36,10 @@ class CustomPermalinks
     }
 
     /**
-     * Include required core files used in admin and on the frontend.
-     *
-     * @since 1.2.18
-     * @access private
+     * @desc
      */
     private function includes()
     {
-//        include_once CUSTOM_PERMALINKS_PATH . 'includes/class-custom-permalinks-form.php';
-//        include_once CUSTOM_PERMALINKS_PATH . 'includes/class-custom-permalinks-frontend.php';
-//        include_once CUSTOM_PERMALINKS_PATH . 'admin/class-custom-permalinks-admin.php';
-//        include_once CUSTOM_PERMALINKS_PATH . 'admin/class-custom-permalinks-post-types.php';
-//        include_once CUSTOM_PERMALINKS_PATH . 'admin/class-custom-permalinks-post-types-table.php';
-//        include_once CUSTOM_PERMALINKS_PATH . 'admin/class-custom-permalinks-taxonomies.php';
-//        include_once CUSTOM_PERMALINKS_PATH . 'admin/class-custom-permalinks-taxonomies-table.php';
 
         new CustomPermalinksAdmin();
 
@@ -104,9 +94,7 @@ class CustomPermalinks
      */
     public static function activate_details()
     {
-//        include_once CUSTOM_PERMALINKS_PATH . 'admin/class-custom-permalinks-updates.php';
-        new CustomPermalinksUpdates('activate');
-
+        //new CustomPermalinksUpdates('activate');
         update_option('custom_permalinks_plugin_version', CUSTOM_PERMALINKS_VERSION);
     }
 
@@ -115,8 +103,7 @@ class CustomPermalinks
      */
     public static function deactivate_details()
     {
-//        include_once CUSTOM_PERMALINKS_PATH . 'admin/class-custom-permalinks-updates.php';
-        new CustomPermalinksUpdates('deactivate');
+        //new CustomPermalinksUpdates('deactivate');
     }
 
     /**

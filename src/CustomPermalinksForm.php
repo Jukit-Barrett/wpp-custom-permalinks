@@ -8,16 +8,12 @@ namespace Mrzkit\WppCustomPermalinks;
 class CustomPermalinksForm
 {
     /**
-     * JS file suffix extension.
-     *
-     * @var string
+     * @var string JS 文件后缀
      */
     private $js_file_suffix = '.min.js';
 
     /**
-     * Decide whether to show metabox or override WordPress default Permalink box.
-     *
-     * @var int
+     * @var int 决定是显示 metabox 还是覆盖 WordPress 默认的永久链接框
      */
     private $permalink_metabox = 0;
 
@@ -36,34 +32,40 @@ class CustomPermalinksForm
          */
         $this->js_file_suffix = '-' . CUSTOM_PERMALINKS_VERSION . '.min.js';
 
+        // 添加所有内置元框后触发
         add_action('add_meta_boxes', array($this, 'permalink_edit_box'));
+        // 保存 posts 后触发
         add_action('save_post', array($this, 'save_post'), 10, 3);
+        // 删除 posts 后触发
         add_action('delete_post', array($this, 'delete_permalink'), 10);
+        // Fires at the end of the Add Term form for all taxonomies
         add_action('category_add_form', array($this, 'term_options'));
+        // Fires at the end of the Edit Term form for all taxonomies
         add_action('category_edit_form', array($this, 'term_options'));
+        // Fires at the end of the Add Term form for all taxonomies
         add_action('post_tag_add_form', array($this, 'term_options'));
+        // Fires at the end of the Edit Term form for all taxonomies
         add_action('post_tag_edit_form', array($this, 'term_options'));
+        // 在创建新 term 后以及清除 term 缓存后触发
         add_action('created_term', array($this, 'save_term'), 10, 3);
+        // 在一个 term 被更新并且 term 缓存被清理后出现
         add_action('edited_term', array($this, 'save_term'), 10, 3);
+        // 从数据库中删除 term 并清除缓存后触发
         add_action('delete_term', array($this, 'delete_term_permalink'), 10, 3);
+        // 为 REST API 注册重写规则
         add_action('rest_api_init', array($this, 'rest_edit_form'));
-
+        //
         add_action('update_option_page_on_front', array($this, 'static_homepage'), 10, 2);
-
+        // 过滤示例永久链接 HTML 标记
         add_filter('get_sample_permalink_html', array($this, 'sample_permalink_html'), 10, 2);
-
+        // Filters whether a meta key is considered protected
         add_filter('is_protected_meta', array($this, 'protect_meta'), 10, 2);
     }
 
     /**
-     * Initialize WordPress Hooks.
-     *
+     * @desc Initialize WordPress Hooks
      * @param object $post WP Post Object.
-     *
-     * return bool false Whether to show Custom Permalink form or not.
-     * @since 1.6.0
-     * @access private
-     *
+     * @return bool bool false Whether to show Custom Permalink form or not.
      */
     private function exclude_custom_permalinks($post)
     {
@@ -77,8 +79,6 @@ class CustomPermalinksForm
 
         /*
          * Exclude custom permalink `form` from any post(s) if filter returns `true`.
-         *
-         * @since 1.6.0
          */
         $exclude_posts     = apply_filters(
             'custom_permalinks_exclude_posts',
@@ -106,12 +106,7 @@ class CustomPermalinksForm
     }
 
     /**
-     * Register meta box(es).
-     *
-     * @return void
-     * @since 1.4.0
-     * @access public
-     *
+     * @desc Register meta box(es).
      */
     public function permalink_edit_box()
     {
@@ -129,15 +124,10 @@ class CustomPermalinksForm
     }
 
     /**
-     * Set the meta_keys to protected which is created by the plugin.
-     *
+     * @desc 将由插件创建的 meta_keys 设置为受保护
      * @param bool $protected Whether the key is protected or not.
      * @param string $meta_key Meta key.
-     *
-     * @return bool `true` for the custom_permalink key.
-     * @since 1.4.0
-     * @access public
-     *
+     * @return bool|mixed bool `true` for the custom_permalink key.
      */
     public function protect_meta($protected, $meta_key)
     {
@@ -149,16 +139,10 @@ class CustomPermalinksForm
     }
 
     /**
-     * Sanitize given string to make it standard URL. It's a copy of default
-     * `sanitize_title_with_dashes` function with few changes.
-     *
+     * @desc 清理给定的字符串以使其成为标准 URL。 这是默认的副本 `sanitize_title_with_dashes` 功能几乎没有变化。
      * @param string $permalink String that needs to be sanitized.
      * @param string|null $language_code Language code.
-     *
-     * @return string Sanitized permalink.
-     * @since 2.0.0
-     * @access private
-     *
+     * @return array|string|string[] Sanitized permalink.
      */
     private function sanitize_permalink($permalink, $language_code)
     {
@@ -343,20 +327,14 @@ class CustomPermalinksForm
     }
 
     /**
-     * Save per-post options.
-     *
-     * @access public
-     *
+     * @desc Save per-post options.
      * @param int $post_id Post ID.
-     * @param WP_Post $post Post object.
-     *
+     * @param \WP_Post $post Post object.
      * @return void
      */
     public function save_post($post_id, $post)
     {
-        if ( !isset($_REQUEST['_custom_permalinks_post_nonce'])
-             && !isset($_REQUEST['custom_permalink'])
-        ) {
+        if ( !isset($_REQUEST['_custom_permalinks_post_nonce']) && !isset($_REQUEST['custom_permalink'])) {
             return;
         }
 
@@ -397,12 +375,8 @@ class CustomPermalinksForm
     }
 
     /**
-     * Delete Post Permalink.
-     *
-     * @access public
-     *
+     * @desc Delete Post Permalink.
      * @param int $post_id Post ID.
-     *
      * @return void
      */
     public function delete_permalink($post_id)
@@ -411,15 +385,10 @@ class CustomPermalinksForm
     }
 
     /**
-     * Result Permalink HTML Form for classic editor and Gutenberg.
-     *
+     * @desc Result Permalink HTML Form for classic editor and Gutenberg.
      * @param object $post WP Post Object.
      * @param bool $meta_box Show whether calls from classic WordPress or Gutenberg.
-     *
      * @return string Permalink Form HTML.
-     * @since 1.6.0
-     * @access private
-     *
      */
     private function get_permalink_html($post, $meta_box = false)
     {
@@ -494,13 +463,9 @@ class CustomPermalinksForm
     }
 
     /**
-     * Per-post/page options (WordPress > 2.9).
-     *
-     * @access public
-     *
+     * @desc Per-post/page options (WordPress > 2.9).
      * @param string $html WP Post Permalink HTML.
      * @param int $post_id Post ID.
-     *
      * @return string Edit Form string.
      */
     public function sample_permalink_html($html, $post_id)
@@ -519,13 +484,9 @@ class CustomPermalinksForm
     }
 
     /**
-     * Adds the Permalink Edit Meta box for the user with validating the
+     * @desc Adds the Permalink Edit Meta box for the user with validating the
      * PostTypes to make compatibility with Gutenberg.
-     *
-     * @access public
-     *
      * @param object $post WP Post Object.
-     *
      * @return void
      */
     public function meta_edit_form($post)
@@ -558,12 +519,8 @@ class CustomPermalinksForm
     }
 
     /**
-     * Per-category/tag options.
-     *
-     * @access public
-     *
-     * @param object|string $tag Current taxonomy term object for Edit form
-     *                           otherwise the taxonomy slug.
+     * @desc Per-category/tag options.
+     * @param object|string $tag 编辑表单的当前分类术语对象，否则为分类 slug
      *
      * @return void
      */
@@ -599,10 +556,7 @@ class CustomPermalinksForm
     }
 
     /**
-     * Helper function to render form.
-     *
-     * @access private
-     *
+     * @desc Helper function to render form.
      * @param string $permalink Permalink which is created by the plugin.
      * @param string $original Permalink which set by WordPress.
      * @param int|string $id Post ID for Posts, Pages and custom post
@@ -610,12 +564,9 @@ class CustomPermalinksForm
      *                              taxonomy slug in case of term add.
      * @param bool $render_containers Shows Post/Term Edit.
      * @param string $postname Post Name.
-     *
      * @return void
      */
-    private function get_permalink_form($permalink, $original, $id,
-                                        $render_containers = true, $postname = ''
-    )
+    private function get_permalink_form($permalink, $original, $id, $render_containers = true, $postname = '')
     {
         $encoded_permalink = htmlspecialchars(urldecode($permalink));
         $home_url          = trailingslashit(home_url());
@@ -700,14 +651,9 @@ class CustomPermalinksForm
     }
 
     /**
-     * Save term (common to tags and categories).
-     *
+     * @desc Save term (common to tags and categories).
      * @param string $term_id Term ID.
-     *
      * @return void
-     * @since 1.6.0
-     * @access public
-     *
      */
     public function save_term($term_id)
     {
@@ -791,12 +737,8 @@ class CustomPermalinksForm
     }
 
     /**
-     * Delete term.
-     *
-     * @access public
-     *
+     * @desc Delete term.
      * @param int $term_id Term ID.
-     *
      * @return void
      */
     public function delete_term_permalink($term_id)
@@ -815,15 +757,9 @@ class CustomPermalinksForm
     }
 
     /**
-     * Check Conflicts and resolve it (e.g: Polylang) UPDATED for Polylang
-     * hide_default setting.
-     *
-     * @param string $requested_url Original permalink.
-     *
-     * @return string requested URL by removing the language/ from it if exist.
-     * @since 1.2.0
-     * @access public
-     *
+     * @desc 检查冲突并解决它（例如：Polylang）更新了 Polylang hide_default 设置
+     * @param $requested_url
+     * @return array|mixed|string|string[]|void
      */
     public function check_conflicts($requested_url = '')
     {
@@ -871,14 +807,9 @@ class CustomPermalinksForm
     }
 
     /**
-     * Refresh Permalink using AJAX Call.
-     *
+     * @desc Refresh Permalink using AJAX Call.
      * @param object $data Contains post id with some default REST Values.
-     *
      * @return void
-     * @since 1.6.0
-     * @access public
-     *
      */
     public function refresh_meta_form($data)
     {
@@ -932,12 +863,8 @@ class CustomPermalinksForm
     }
 
     /**
-     * Added Custom Endpoints for refreshing the permalink.
-     *
+     * @desc 添加了用于刷新永久链接的自定义端点
      * @return void
-     * @since 1.6.0
-     * @access public
-     *
      */
     public function rest_edit_form()
     {
@@ -962,15 +889,10 @@ class CustomPermalinksForm
     }
 
     /**
-     * Delete the permalink for the page selected as the static Homepage.
-     *
+     * @desc 删除选为静态主页的页面的永久链接
      * @param int $prev_homepage_id Page ID of previously set Front Page.
      * @param int $new_homepage_id Page ID of current Front Page.
-     *
      * @return void
-     * @since 1.6.0
-     * @access public
-     *
      */
     public function static_homepage($prev_homepage_id, $new_homepage_id)
     {
