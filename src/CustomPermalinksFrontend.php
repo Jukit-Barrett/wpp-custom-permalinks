@@ -63,20 +63,14 @@ class CustomPermalinksFrontend
     }
 
     /**
-     * Replace double slash `//` with single slash `/`.
-     *
+     * @desc Replace double slash `//` with single slash `/`.
      * @param string $permalink URL in which `//` needs to be replaced with `/`.
-     *
      * @return string URL with single slash.
-     * @since 1.6.0
-     * @access public
-     *
      */
     public function remove_double_slash($permalink = '')
     {
         $protocol = '';
-        if (0 === strpos($permalink, 'http://')
-            || 0 === strpos($permalink, 'https://')
+        if (0 === strpos($permalink, 'http://') || 0 === strpos($permalink, 'https://')
         ) {
             $split_protocol = explode('://', $permalink);
             if (1 < count($split_protocol)) {
@@ -92,16 +86,10 @@ class CustomPermalinksFrontend
     }
 
     /**
-     * Use `wpml_permalink` to add language information to permalinks and
-     * resolve language switcher issue if found.
-     *
+     * @desc 使用 `wpml_permalink` 将语言信息添加到永久链接并解决语言切换器问题（如果发现）
      * @param string $permalink Custom Permalink.
      * @param string $language_code The language to convert the URL into.
-     *
      * @return string permalink with language information.
-     * @since 1.6.0
-     * @access public
-     *
      */
     public function wpml_permalink_filter($permalink, $language_code)
     {
@@ -128,15 +116,10 @@ class CustomPermalinksFrontend
     }
 
     /**
-     * Search a permalink in the posts table and return its result.
-     *
+     * @desc 在 posts 表中搜索永久链接并返回其结果
      * @param string $requested_url Requested URL.
-     *
      * @return object|null Containing Post ID, Permalink, Post Type, and Post status
      *                     if URL matched otherwise returns null.
-     * @since 2.0.0
-     * @access private
-     *
      */
     private function query_post($requested_url)
     {
@@ -188,15 +171,9 @@ class CustomPermalinksFrontend
     }
 
     /**
-     * Check conditions if it matches then return true to stop processing the
-     * particular query like for sitemaps.
-     *
+     * @desc 检查条件是否匹配然后返回 true 以停止处理特定查询，例如站点地图
      * @param array $query Requested Query.
-     *
      * @return bool Whether to process the query or not.
-     * @since 2.1.0
-     * @access private
-     *
      */
     private function exclude_query_proccess($query)
     {
@@ -229,14 +206,9 @@ class CustomPermalinksFrontend
     }
 
     /**
-     * Filter to rewrite the query if we have a matching post.
-     *
+     * @desc 如果我们有匹配的帖子，则过滤以重写查询
      * @param array $query The array of requested query variables.
-     *
      * @return array the URL which has to be parsed.
-     * @since 0.1.0
-     * @access public
-     *
      */
     public function parse_request($query)
     {
@@ -286,7 +258,7 @@ class CustomPermalinksFrontend
         }
 
         if (defined('POLYLANG_VERSION')) {
-            $cp_form = new Custom_Permalinks_Form();
+            $cp_form = new CustomPermalinksForm();
             $request = $cp_form->check_conflicts($request);
         }
 
@@ -473,15 +445,10 @@ class CustomPermalinksFrontend
     }
 
     /**
-     * Filters the determined post ID and change it if we have a matching URL in CP.
-     *
+     * @desc 过滤确定的帖子 ID，如果我们在 CP 中有匹配的 URL，则更改它
      * @param int $post_id Post ID or 0.
      * @param string $oembed_url The requested URL.
-     *
      * @return int Post ID or 0.
-     * @since 2.0.0
-     * @access public
-     *
      */
     public function oembed_request($post_id, $oembed_url)
     {
@@ -514,7 +481,7 @@ class CustomPermalinksFrontend
         }
 
         if (defined('POLYLANG_VERSION')) {
-            $cp_form = new Custom_Permalinks_Form();
+            $cp_form = new CustomPermalinksForm();
             $request = $cp_form->check_conflicts($request);
         }
         $request_no_slash = preg_replace('@/+@', '/', trim($request, '/'));
@@ -528,12 +495,8 @@ class CustomPermalinksFrontend
     }
 
     /**
-     * Action to redirect to the custom permalink.
-     *
+     * @desc 重定向到自定义永久链接的操作
      * @return void
-     * @since 0.1.0
-     * @access public
-     *
      */
     public function make_redirect()
     {
@@ -581,7 +544,7 @@ class CustomPermalinksFrontend
         }
 
         if (defined('POLYLANG_VERSION')) {
-            $cp_form = new Custom_Permalinks_Form();
+            $cp_form = new CustomPermalinksForm();
             $request = $cp_form->check_conflicts($request);
         }
         $request_no_slash = preg_replace('@/+@', '/', trim($request, '/'));
@@ -658,13 +621,9 @@ class CustomPermalinksFrontend
     }
 
     /**
-     * Filter to replace the post permalink with the custom one.
-     *
-     * @access public
-     *
+     * @desc 过滤以用自定义链接替换帖子永久链接
      * @param string $permalink Default WordPress Permalink of Post.
      * @param object $post Post Details.
-     *
      * @return string customized Post Permalink.
      */
     public function custom_post_link($permalink, $post)
@@ -713,13 +672,9 @@ class CustomPermalinksFrontend
     }
 
     /**
-     * Filter to replace the page permalink with the custom one.
-     *
-     * @access public
-     *
+     * @desc 过滤以用自定义页面替换页面永久链接
      * @param string $permalink Default WordPress Permalink of Page.
      * @param int $page Page ID.
-     *
      * @return string customized Page Permalink.
      */
     public function custom_page_link($permalink, $page)
@@ -763,13 +718,9 @@ class CustomPermalinksFrontend
     }
 
     /**
-     * Filter to replace the term permalink with the custom one.
-     *
-     * @access public
-     *
+     * @desc 过滤以将术语永久链接替换为自定义链接
      * @param string $permalink Term link URL.
      * @param object $term Term object.
-     *
      * @return string customized Term Permalink.
      */
     public function custom_term_link($permalink, $term)
@@ -828,13 +779,8 @@ class CustomPermalinksFrontend
     }
 
     /**
-     * Remove the post_link and user_trailingslashit filter to get the original
-     * permalink of the default and custom post type and apply right after that.
-     *
-     * @access public
-     *
+     * @desc 删除 post_link 和 user_trailingslashit 过滤器以获取默认和自定义帖子类型的原始永久链接，然后立即应用。
      * @param int $post_id Post ID.
-     *
      * @return string Original Permalink for Posts.
      */
     public function original_post_link($post_id)
@@ -860,13 +806,8 @@ class CustomPermalinksFrontend
     }
 
     /**
-     * Remove the page_link and user_trailingslashit filter to get the original
-     * permalink of the page and apply right after that.
-     *
-     * @access public
-     *
+     * @desc 删除 page_link 和 user_trailingslashit 过滤器以获取页面的原始永久链接并在之后立即应用
      * @param int $post_id Page ID.
-     *
      * @return string Original Permalink for the Page.
      */
     public function original_page_link($post_id)
@@ -895,15 +836,9 @@ class CustomPermalinksFrontend
     }
 
     /**
-     * Remove the term_link and user_trailingslashit filter to get the original
-     * permalink of the Term and apply right after that.
-     *
+     * @desc 删除 term_link 和 user_trailingslashit 过滤器以获取 Term 的原始永久链接并在此之后立即应用
      * @param int $term_id Term ID.
-     *
      * @return string Original Permalink for Posts.
-     * @since 1.6.0
-     * @access public
-     *
      */
     public function original_term_link($term_id)
     {
@@ -929,12 +864,8 @@ class CustomPermalinksFrontend
     }
 
     /**
-     * Filter to handle trailing slashes correctly.
-     *
-     * @access public
-     *
+     * @desc 过滤以正确处理尾部斜线
      * @param string $url_string URL with or without a trailing slash.
-     *
      * @return string Adds/removes a trailing slash based on the permalink structure.
      */
     public function custom_trailingslash($url_string)
@@ -977,12 +908,8 @@ class CustomPermalinksFrontend
     }
 
     /**
-     * Get permalink for term.
-     *
-     * @access public
-     *
+     * @desc Get permalink for term.
      * @param int $term_id Term id.
-     *
      * @return bool Term link.
      */
     public function term_permalink($term_id)
@@ -1000,14 +927,9 @@ class CustomPermalinksFrontend
     }
 
     /**
-     * Fix double slash issue with canonical of Yoast SEO specially with WPML.
-     *
+     * @desc 使用 WPML 特别修复 Yoast SEO 规范的双斜杠问题
      * @param string $canonical The canonical.
-     *
      * @return string the canonical after removing double slash if exist.
-     * @since 1.6.0
-     * @access public
-     *
      */
     public function fix_canonical_double_slash($canonical)
     {

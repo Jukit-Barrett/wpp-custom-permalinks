@@ -3,7 +3,6 @@
 namespace Mrzkit\WppCustomPermalinks;
 
 use Mrzkit\WppCustomPermalinks\Admin\CustomPermalinksAdmin;
-use Mrzkit\WppCustomPermalinks\Admin\CustomPermalinksUpdates;
 
 class CustomPermalinks
 {
@@ -94,7 +93,7 @@ class CustomPermalinks
      */
     public static function activate_details()
     {
-        //new CustomPermalinksUpdates('activate');
+        // 更新插件版本
         update_option('custom_permalinks_plugin_version', CUSTOM_PERMALINKS_VERSION);
     }
 
@@ -103,11 +102,10 @@ class CustomPermalinks
      */
     public static function deactivate_details()
     {
-        //new CustomPermalinksUpdates('deactivate');
     }
 
     /**
-     * @desc 检查角色是否不存在然后调用函数添加它。 如果插件更新，请更新站点详细信息。 此外，将插件语言文件加载到支持不同的语言。
+     * @desc 检查角色是否不存在然后调用函数添加它。如果插件更新，请更新站点详细信息。 此外，将插件语言文件加载到支持不同的语言。
      */
     public function check_loaded_plugins()
     {
