@@ -132,37 +132,31 @@ class CustomPermalinksFrontend
 
         if ( !$posts) {
             // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+            $sql   = 'SELECT p.ID, pm.meta_value, p.post_type, p.post_status ' .
+                     " FROM $wpdb->posts AS p INNER JOIN $wpdb->postmeta AS pm ON (pm.post_id = p.ID) " .
+                     " WHERE pm.meta_key = 'custom_permalink' " .
+                     ' AND (pm.meta_value = %s OR pm.meta_value = %s) ' .
+                     " AND p.post_status != 'trash' AND p.post_type != 'nav_menu_item' " .
+                     " ORDER BY FIELD(post_status,'publish','private','pending','draft','auto-draft','inherit')," .
+                     " FIELD(post_type,'post','page') LIMIT 1";
             $posts = $wpdb->get_results(
-                $wpdb->prepare(
-                    'SELECT p.ID, pm.meta_value, p.post_type, p.post_status ' .
-                    " FROM $wpdb->posts AS p INNER JOIN $wpdb->postmeta AS pm ON (pm.post_id = p.ID) " .
-                    " WHERE pm.meta_key = 'custom_permalink' " .
-                    ' AND (pm.meta_value = %s OR pm.meta_value = %s) ' .
-                    " AND p.post_status != 'trash' AND p.post_type != 'nav_menu_item' " .
-                    " ORDER BY FIELD(post_status,'publish','private','pending','draft','auto-draft','inherit')," .
-                    " FIELD(post_type,'post','page') LIMIT 1",
-                    $requested_url,
-                    $requested_url . '/'
-                )
+                $wpdb->prepare($sql, $requested_url, $requested_url . '/')
             );
 
             $remove_like_query = apply_filters('cp_remove_like_query', '__true');
             if ( !$posts && '__true' === $remove_like_query) {
                 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+                $sql   = "SELECT p.ID, pm.meta_value, p.post_type, p.post_status FROM $wpdb->posts AS p " .
+                         " LEFT JOIN $wpdb->postmeta AS pm ON (p.ID = pm.post_id) WHERE " .
+                         " meta_key = 'custom_permalink' AND meta_value != '' AND " .
+                         ' ( LOWER(meta_value) = LEFT(LOWER(%s), LENGTH(meta_value)) OR ' .
+                         '   LOWER(meta_value) = LEFT(LOWER(%s), LENGTH(meta_value)) ) ' .
+                         "  AND post_status != 'trash' AND post_type != 'nav_menu_item'" .
+                         ' ORDER BY LENGTH(meta_value) DESC, ' .
+                         " FIELD(post_status,'publish','private','pending','draft','auto-draft','inherit')," .
+                         " FIELD(post_type,'post','page'), p.ID ASC LIMIT 1";
                 $posts = $wpdb->get_results(
-                    $wpdb->prepare(
-                        "SELECT p.ID, pm.meta_value, p.post_type, p.post_status FROM $wpdb->posts AS p " .
-                        " LEFT JOIN $wpdb->postmeta AS pm ON (p.ID = pm.post_id) WHERE " .
-                        " meta_key = 'custom_permalink' AND meta_value != '' AND " .
-                        ' ( LOWER(meta_value) = LEFT(LOWER(%s), LENGTH(meta_value)) OR ' .
-                        '   LOWER(meta_value) = LEFT(LOWER(%s), LENGTH(meta_value)) ) ' .
-                        "  AND post_status != 'trash' AND post_type != 'nav_menu_item'" .
-                        ' ORDER BY LENGTH(meta_value) DESC, ' .
-                        " FIELD(post_status,'publish','private','pending','draft','auto-draft','inherit')," .
-                        " FIELD(post_type,'post','page'), p.ID ASC LIMIT 1",
-                        $requested_url,
-                        $requested_url . '/'
-                    )
+                    $wpdb->prepare($sql, $requested_url, $requested_url . '/')
                 );
             }
 
@@ -291,10 +285,7 @@ class CustomPermalinksFrontend
                 $term_permalink = false;
                 foreach (array_keys($table) as $permalink) {
                     $perm_length = strlen($permalink);
-                    if ( !$term_permalink
-                         && null !== $original_url
-                         && trim($permalink, '/') !== $request_no_slash
-                    ) {
+                    if ( !$term_permalink && null !== $original_url && trim($permalink, '/') !== $request_no_slash) {
                         continue;
                     }
 
@@ -304,21 +295,15 @@ class CustomPermalinksFrontend
                         $term           = $table[$permalink];
                         $term_permalink = true;
 
-                        /*
-                         * Preserve this URL for later if it's the same as the
-                         * permalink (no extra stuff).
-                         */
+                        // 如果它与固定链接相同（没有额外的东西），请保留此 URL 以备后用。
                         if (trim($permalink, '/') === $request_no_slash) {
                             $this->registered_url = $request;
                         }
 
                         $found_permalink = $permalink;
                         $term_link       = $this->original_term_link($term['id']);
-                        $original_url    = str_replace(
-                            trim($permalink, '/'),
-                            $term_link,
-                            trim($request, '/')
-                        );
+
+                        $original_url = str_replace(trim($permalink, '/'), $term_link, trim($request, '/'));
                     }
                 }
             }
@@ -422,7 +407,7 @@ class CustomPermalinksFrontend
          * 首先，搜索匹配的自定义永久链接，如果找到则生成相应的原始 URL
          */
 
-        $oembed_url   = str_replace(home_url(), '', $oembed_url);
+        $oembed_url = str_replace(home_url(), '', $oembed_url);
 
         // Get request URI, strip parameters and /'s.
         $url     = wp_parse_url(get_bloginfo('url'));
@@ -447,6 +432,7 @@ class CustomPermalinksFrontend
             $cp_form = new CustomPermalinksForm();
             $request = $cp_form->check_conflicts($request);
         }
+        // 将N个斜线，替换成单个斜线
         $request_no_slash = preg_replace('@/+@', '/', trim($request, '/'));
         $posts            = $this->query_post($request_no_slash);
 
