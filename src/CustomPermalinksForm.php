@@ -54,7 +54,7 @@ class CustomPermalinksForm
         add_action('delete_term', array($this, 'delete_term_permalink'), 10, 3);
         // 为 REST API 注册重写规则
         add_action('rest_api_init', array($this, 'rest_edit_form'));
-        //
+        // 删除选为静态主页的页面的永久链接
         add_action('update_option_page_on_front', array($this, 'static_homepage'), 10, 2);
         // 过滤示例永久链接 HTML 标记
         add_filter('get_sample_permalink_html', array($this, 'sample_permalink_html'), 10, 2);

@@ -179,32 +179,21 @@ class CustomPermalinksFrontend
      */
     private function exclude_query_proccess($query)
     {
-        $exclude = false;
-
-        /*
-         * Return Query for Sitemap pages.
-         */
-        if (isset($query)
-            && (
-                (isset($query['sitemap']) && !empty($query['sitemap']))
-                || (
-                    isset($query['seopress_sitemap'])
-                    && !empty($query['seopress_sitemap'])
-                )
-                || (
-                    isset($query['seopress_cpt'])
-                    && !empty($query['seopress_cpt'])
-                )
-                || (
-                    isset($query['seopress_sitemap_xsl'])
-                    && 1 === (int) $query['seopress_sitemap_xsl']
-                )
-            )
-        ) {
-            $exclude = true;
+        if ( !isset($query)) {
+            return false;
         }
 
-        return $exclude;
+        if (isset($query['sitemap']) && !empty($query['sitemap'])) {
+            return true;
+        } else if (isset($query['seopress_sitemap']) && !empty($query['seopress_sitemap'])) {
+            return true;
+        } else if (isset($query['seopress_cpt']) && !empty($query['seopress_cpt'])) {
+            return true;
+        } else if (isset($query['seopress_sitemap_xsl']) && 1 === (int) $query['seopress_sitemap_xsl']) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -214,30 +203,21 @@ class CustomPermalinksFrontend
      */
     public function parse_request($query)
     {
-        global $wpdb;
-
-        if (isset($_SERVER['REQUEST_URI'])
-            && $_SERVER['REQUEST_URI'] !== $this->request_uri
-        ) {
+        if (isset($_SERVER['REQUEST_URI']) && $_SERVER['REQUEST_URI'] !== $this->request_uri) {
             // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
             $this->request_uri = $_SERVER['REQUEST_URI'];
         }
 
-        /*
-         * Return Query for Sitemap pages.
-         */
+        // 站点地图页面的返回查询
         $stop_query = $this->exclude_query_proccess($query);
         if ($stop_query) {
-            // Making it true to avoid redirect if query doesn't needs to be processed.
+            // 如果不需要处理查询，则避免重定向
             $this->parse_request_status = true;
 
             return $query;
         }
 
-        /*
-         * First, search for a matching custom permalink, and if found generate the
-         * corresponding original URL.
-         */
+        // 首先，搜索匹配的自定义永久链接，如果找到则生成相应的原始 URL
         $original_url = null;
 
         // Get request URI, strip parameters and /'s.
