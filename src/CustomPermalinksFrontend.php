@@ -534,16 +534,10 @@ class CustomPermalinksFrontend
             if (substr($request, 0, $original_length) === $original_permalink
                 && trim($request, '/') !== trim($original_permalink, '/')
             ) {
+                $replaceString = str_replace(trim($original_permalink, '/'), trim($custom_permalink, '/'), $request);
+
                 // This is the original link; we can use this URL to derive the new one.
-                $url = preg_replace(
-                    '@//*@',
-                    '/',
-                    str_replace(
-                        trim($original_permalink, '/'),
-                        trim($custom_permalink, '/'),
-                        $request
-                    )
-                );
+                $url = preg_replace('@//*@', '/', $replaceString);
                 $url = preg_replace('@([^?]*)&@', '\1?', $url);
             }
 
@@ -563,6 +557,7 @@ class CustomPermalinksFrontend
      */
     public function custom_post_link($permalink, $post)
     {
+
         // 获取 custom_permalink 数据
         $custom_permalink = get_post_meta($post->ID, 'custom_permalink', true);
         if ($custom_permalink) {
@@ -572,23 +567,12 @@ class CustomPermalinksFrontend
             }
 
             //获取可翻译元素的语言代码
-            $language_code = apply_filters(
-                'wpml_element_language_code',
-                null,
-                array(
-                    'element_id'   => $post->ID,
-                    'element_type' => $post_type,
-                )
-            );
+            $language_code = apply_filters('wpml_element_language_code', null, array('element_id' => $post->ID, 'element_type' => $post_type,));
 
             $permalink = $this->wpml_permalink_filter($custom_permalink, $language_code);
         } else {
             if (class_exists('SitePress')) {
-                $wpml_lang_format = apply_filters(
-                    'wpml_setting',
-                    0,
-                    'language_negotiation_type'
-                );
+                $wpml_lang_format = apply_filters('wpml_setting', 0, 'language_negotiation_type');
 
                 if (1 === intval($wpml_lang_format)) {
                     $get_original_url = $this->original_post_link($post->ID);
@@ -615,23 +599,12 @@ class CustomPermalinksFrontend
     {
         $custom_permalink = get_post_meta($page, 'custom_permalink', true);
         if ($custom_permalink) {
-            $language_code = apply_filters(
-                'wpml_element_language_code',
-                null,
-                array(
-                    'element_id'   => $page,
-                    'element_type' => 'page',
-                )
-            );
+            $language_code = apply_filters('wpml_element_language_code', null, array('element_id' => $page, 'element_type' => 'page',));
 
             $permalink = $this->wpml_permalink_filter($custom_permalink, $language_code);
         } else {
             if (class_exists('SitePress')) {
-                $wpml_lang_format = apply_filters(
-                    'wpml_setting',
-                    0,
-                    'language_negotiation_type'
-                );
+                $wpml_lang_format = apply_filters('wpml_setting', 0, 'language_negotiation_type');
 
                 if (1 === intval($wpml_lang_format)) {
                     $get_original_url = $this->original_page_link($page);
@@ -669,24 +642,13 @@ class CustomPermalinksFrontend
                         $term_type = $term->taxonomy;
                     }
 
-                    $language_code = apply_filters(
-                        'wpml_element_language_code',
-                        null,
-                        array(
-                            'element_id'   => $term->term_taxonomy_id,
-                            'element_type' => $term_type,
-                        )
-                    );
+                    $language_code = apply_filters('wpml_element_language_code', null, array('element_id' => $term->term_taxonomy_id, 'element_type' => $term_type,));
                 }
 
                 $permalink = $this->wpml_permalink_filter($custom_permalink, $language_code);
             } elseif (isset($term->term_id)) {
                 if (class_exists('SitePress')) {
-                    $wpml_lang_format = apply_filters(
-                        'wpml_setting',
-                        0,
-                        'language_negotiation_type'
-                    );
+                    $wpml_lang_format = apply_filters('wpml_setting', 0, 'language_negotiation_type');
 
                     if (1 === intval($wpml_lang_format)) {
                         $get_original_url = $this->original_term_link(
@@ -719,11 +681,9 @@ class CustomPermalinksFrontend
         include_once ABSPATH . '/wp-admin/includes/post.php';
 
         list($permalink, $post_name) = get_sample_permalink($post_id);
-        $permalink = str_replace(
-            array('%pagename%', '%postname%'),
-            $post_name,
-            $permalink
-        );
+
+        $permalink = str_replace(array('%pagename%', '%postname%'), $post_name, $permalink);
+
         $permalink = ltrim(str_replace(home_url(), '', $permalink), '/');
 
         add_filter('post_link', array($this, 'custom_post_link'), 10, 3);
@@ -740,19 +700,14 @@ class CustomPermalinksFrontend
     public function original_page_link($post_id)
     {
         remove_filter('page_link', array($this, 'custom_page_link'));
-        remove_filter(
-            'user_trailingslashit',
-            array($this, 'custom_trailingslash')
-        );
+        remove_filter('user_trailingslashit', array($this, 'custom_trailingslash'));
 
         include_once ABSPATH . '/wp-admin/includes/post.php';
 
         list($permalink, $post_name) = get_sample_permalink($post_id);
-        $permalink = str_replace(
-            array('%pagename%', '%postname%'),
-            $post_name,
-            $permalink
-        );
+
+        $permalink = str_replace(array('%pagename%', '%postname%'), $post_name, $permalink);
+
         $permalink = ltrim(str_replace(home_url(), '', $permalink), '/');
 
         add_filter('user_trailingslashit', array($this, 'custom_trailingslash'));
@@ -769,10 +724,7 @@ class CustomPermalinksFrontend
     public function original_term_link($term_id)
     {
         remove_filter('term_link', array($this, 'custom_term_link'));
-        remove_filter(
-            'user_trailingslashit',
-            array($this, 'custom_trailingslash')
-        );
+        remove_filter('user_trailingslashit', array($this, 'custom_trailingslash'));
 
         $term      = get_term($term_id);
         $term_link = get_term_link($term);
@@ -796,13 +748,11 @@ class CustomPermalinksFrontend
      */
     public function custom_trailingslash($url_string)
     {
-        remove_filter(
-            'user_trailingslashit',
-            array($this, 'custom_trailingslash')
-        );
+        remove_filter('user_trailingslashit', array($this, 'custom_trailingslash'));
 
         $trailingslash_string = $url_string;
-        $url                  = wp_parse_url(get_bloginfo('url'));
+
+        $url = wp_parse_url(get_bloginfo('url'));
 
         if (isset($url['path'])) {
             $request = substr($url_string, strlen($url['path']));

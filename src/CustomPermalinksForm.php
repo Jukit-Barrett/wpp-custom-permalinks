@@ -75,6 +75,7 @@ class CustomPermalinksForm
 
         /*
          * Exclude custom permalink `form` from any post(s) if filter returns `true`.
+         * 如果过滤器返回“true”，则从任何帖子中排除自定义永久链接“form”
          */
         $exclude_posts = apply_filters('custom_permalinks_exclude_posts', $post);
 
