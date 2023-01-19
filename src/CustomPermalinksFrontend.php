@@ -203,6 +203,7 @@ class CustomPermalinksFrontend
      */
     public function parse_request($query)
     {
+        // 初始化请求地址
         if (isset($_SERVER['REQUEST_URI']) && $_SERVER['REQUEST_URI'] !== $this->request_uri) {
             // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
             $this->request_uri = $_SERVER['REQUEST_URI'];
@@ -244,6 +245,7 @@ class CustomPermalinksFrontend
             $request = $cp_form->check_conflicts($request);
         }
 
+        // 将N个斜线转换为单个斜线
         $request_no_slash  = preg_replace('@/+@', '/', trim($request, '/'));
         $posts             = $this->query_post($request_no_slash);
         $permalink_matched = false;
@@ -260,45 +262,29 @@ class CustomPermalinksFrontend
             }
 
             $found_permalink = $posts[0]->meta_value;
-            if ('draft' === $posts[0]->post_status
-                || 'pending' === $posts[0]->post_status
-            ) {
+            // 草稿或等待审核状态时
+            if ('draft' === $posts[0]->post_status || 'pending' === $posts[0]->post_status) {
                 if ('page' === $posts[0]->post_type) {
                     $original_url = '?page_id=' . $posts[0]->ID;
                 } else {
                     $original_url = '?post_type=' . $posts[0]->post_type . '&p=' . $posts[0]->ID;
                 }
             } else {
+                // 转换小写，抹掉两边的 斜线
                 $post_meta = trim(strtolower($posts[0]->meta_value), '/');
                 if ('page' === $posts[0]->post_type) {
+                    // Get Page Link
                     $get_original_url = $this->original_page_link($posts[0]->ID);
-                    $original_url     = preg_replace(
-                        '@/+@',
-                        '/',
-                        str_replace(
-                            $post_meta,
-                            $get_original_url,
-                            strtolower($request_no_slash)
-                        )
-                    );
                 } else {
+                    // Get Post Link
                     $get_original_url = $this->original_post_link($posts[0]->ID);
-                    $original_url     = preg_replace(
-                        '@/+@',
-                        '/',
-                        str_replace(
-                            $post_meta,
-                            $get_original_url,
-                            strtolower($request_no_slash)
-                        )
-                    );
                 }
+                $replaceString = str_replace($post_meta, $get_original_url, strtolower($request_no_slash));
+                $original_url  = preg_replace('@/+@', '/', $replaceString);
             }
         }
 
-        if (null === $original_url
-            || (null !== $original_url && !$permalink_matched)
-        ) {
+        if (null === $original_url || (null !== $original_url && !$permalink_matched)) {
             // See if any terms have a matching permalink.
             $table = get_option('custom_permalink_table');
             if ($table) {
@@ -342,11 +328,9 @@ class CustomPermalinksFrontend
         if (null !== $original_url) {
             $this->parse_request_status = true;
 
-            /*
-             * Allow redirect function to work if permalink is not exactly matched
-             * with the requested URL. Like Trailing slash (Requested URL doesn't
-             * contain trailing slash but permalink has trailing slash or vice versa)
-             * and letter-case issue etc.
+            /**
+             * 如果永久链接与请求的 URL 不完全匹配，则允许重定向功能起作用。
+             * 像尾部斜线（请求的 URL 不包含尾部斜线，但固定链接有尾部斜线，反之亦然）和字母大小写问题等
              */
             if ( !empty($found_permalink) && $found_permalink !== $request) {
                 $this->parse_request_status = false;
@@ -363,22 +347,22 @@ class CustomPermalinksFrontend
                 }
             }
 
-            /*
-             * Now we have the original URL, run this back through WP->parse_request,
-             * in order to parse parameters properly. We set `$_SERVER` variables to
-             * fool the function.
+            /**
+             * 现在我们有了原始 URL，通过 WP->parse_request 运行它，以便正确解析参数。 我们设置 `$_SERVER` 变量来欺骗函数
              */
+
             $_SERVER['REQUEST_URI'] = '/' . ltrim($original_url, '/');
-            $path_info              = apply_filters(
-                'custom_permalinks_path_info',
-                '__false'
-            );
+
+            $path_info = apply_filters('custom_permalinks_path_info', '__false');
+
             if ('__false' !== $path_info) {
                 $_SERVER['PATH_INFO'] = '/' . ltrim($original_url, '/');
             }
 
             $_SERVER['QUERY_STRING'] = '';
-            $pos                     = strpos($original_url, '?');
+
+            $pos = strpos($original_url, '?');
+
             if (false !== $pos) {
                 $_SERVER['QUERY_STRING'] = substr($original_url, $pos + 1);
             }
@@ -434,13 +418,10 @@ class CustomPermalinksFrontend
      */
     public function oembed_request($post_id, $oembed_url)
     {
-        global $wpdb;
-
-        /*
-         * First, search for a matching custom permalink, and if found
-         * generate the corresponding original URL.
+        /**
+         * 首先，搜索匹配的自定义永久链接，如果找到则生成相应的原始 URL
          */
-        $original_url = null;
+
         $oembed_url   = str_replace(home_url(), '', $oembed_url);
 
         // Get request URI, strip parameters and /'s.
@@ -482,19 +463,13 @@ class CustomPermalinksFrontend
      */
     public function make_redirect()
     {
-        global $wpdb;
-
-        /*
-         * If `parse_request()` succeeded then early return to make performance
-         * better.
-         */
+        // 如果 `parse_request()` 成功，则提前返回以提高性能。
         if ($this->parse_request_status) {
             return;
         }
 
-        if (isset($_SERVER['REQUEST_URI'])
-            && $_SERVER['REQUEST_URI'] !== $this->request_uri
-        ) {
+        // 初始化请求地址
+        if (isset($_SERVER['REQUEST_URI']) && $_SERVER['REQUEST_URI'] !== $this->request_uri) {
             // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
             $this->request_uri = $_SERVER['REQUEST_URI'];
         }
@@ -511,15 +486,8 @@ class CustomPermalinksFrontend
             $request = substr($request, 0, $pos);
         }
 
-        /*
-         * Disable redirects to be processed if filter returns `true`.
-         *
-         * @since 1.7.0
-         */
-        $avoid_redirect = apply_filters(
-            'custom_permalinks_avoid_redirect',
-            $request
-        );
+        // 如果过滤器返回“true”，则禁用要处理的重定向
+        $avoid_redirect = apply_filters('custom_permalinks_avoid_redirect', $request);
 
         if (is_bool($avoid_redirect) && $avoid_redirect) {
             return;
@@ -529,12 +497,11 @@ class CustomPermalinksFrontend
             $cp_form = new CustomPermalinksForm();
             $request = $cp_form->check_conflicts($request);
         }
+
         $request_no_slash = preg_replace('@/+@', '/', trim($request, '/'));
         $posts            = $this->query_post($request_no_slash);
 
-        if ( !isset($posts[0]->ID) || !isset($posts[0]->meta_value)
-             || empty($posts[0]->meta_value)
-        ) {
+        if ( !isset($posts[0]->ID) || !isset($posts[0]->meta_value) || empty($posts[0]->meta_value)) {
             global $wp_query;
 
             /*
