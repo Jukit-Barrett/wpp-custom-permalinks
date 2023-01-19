@@ -345,21 +345,11 @@ class CustomPermalinksForm
 
         if ( !empty($_REQUEST['custom_permalink']) && $_REQUEST['custom_permalink'] !== $original_link) {
             // 回调
-            $language_code = apply_filters(
-                'wpml_element_language_code',
-                null,
-                array(
-                    'element_id'   => $post_id,
-                    'element_type' => $post->post_type,
-                )
-            );
+            $language_code = apply_filters('wpml_element_language_code', null, array('element_id' => $post_id, 'element_type' => $post->post_type,));
 
             // 安全清洗
-            $permalink = $this->sanitize_permalink(
             // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-                $_REQUEST['custom_permalink'],
-                $language_code
-            );
+            $permalink = $this->sanitize_permalink($_REQUEST['custom_permalink'], $language_code);
 
             // custom permalink 自己提供的勾子
             $permalink = apply_filters('custom_permalink_before_saving', $permalink, $post_id);
@@ -783,18 +773,13 @@ class CustomPermalinksForm
     public function refresh_meta_form($data)
     {
         if (isset($data['id']) && is_numeric($data['id'])) {
-            $post                               = get_post($data['id']);
-            $all_permalinks                     = array();
-            $all_permalinks['custom_permalink'] = get_post_meta(
-                $data['id'],
-                'custom_permalink',
-                true
-            );
+            $post           = get_post($data['id']);
+            $all_permalinks = array();
+
+            $all_permalinks['custom_permalink'] = get_post_meta($data['id'], 'custom_permalink', true);
 
             if ( !$all_permalinks['custom_permalink']) {
-                if ('draft' === $post->post_status
-                    || 'pending' === $post->post_status
-                ) {
+                if ('draft' === $post->post_status || 'pending' === $post->post_status) {
                     $view_post_link = '?';
                     if ('page' === $post->post_type) {
                         $view_post_link .= 'page_id';
@@ -808,22 +793,15 @@ class CustomPermalinksForm
                     $all_permalinks['preview_permalink'] = $view_post_link;
                 }
             } else {
-                $all_permalinks['custom_permalink'] = htmlspecialchars(
-                    urldecode(
-                        $all_permalinks['custom_permalink']
-                    )
-                );
+                $urlDecode                          = urldecode($all_permalinks['custom_permalink']);
+                $all_permalinks['custom_permalink'] = htmlspecialchars($urlDecode);
             }
 
             $cp_frontend = new CustomPermalinksFrontend();
             if ('page' === $post->post_type) {
-                $all_permalinks['original_permalink'] = $cp_frontend->original_page_link(
-                    $data['id']
-                );
+                $all_permalinks['original_permalink'] = $cp_frontend->original_page_link($data['id']);
             } else {
-                $all_permalinks['original_permalink'] = $cp_frontend->original_post_link(
-                    $data['id']
-                );
+                $all_permalinks['original_permalink'] = $cp_frontend->original_post_link($data['id']);
             }
 
             echo wp_json_encode($all_permalinks);
