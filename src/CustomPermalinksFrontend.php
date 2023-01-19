@@ -628,10 +628,7 @@ class CustomPermalinksFrontend
                 )
             );
 
-            $permalink = $this->wpml_permalink_filter(
-                $custom_permalink,
-                $language_code
-            );
+            $permalink = $this->wpml_permalink_filter($custom_permalink, $language_code);
         } else {
             if (class_exists('SitePress')) {
                 $wpml_lang_format = apply_filters(
@@ -674,10 +671,7 @@ class CustomPermalinksFrontend
                 )
             );
 
-            $permalink = $this->wpml_permalink_filter(
-                $custom_permalink,
-                $language_code
-            );
+            $permalink = $this->wpml_permalink_filter($custom_permalink, $language_code);
         } else {
             if (class_exists('SitePress')) {
                 $wpml_lang_format = apply_filters(
@@ -732,10 +726,7 @@ class CustomPermalinksFrontend
                     );
                 }
 
-                $permalink = $this->wpml_permalink_filter(
-                    $custom_permalink,
-                    $language_code
-                );
+                $permalink = $this->wpml_permalink_filter($custom_permalink, $language_code);
             } elseif (isset($term->term_id)) {
                 if (class_exists('SitePress')) {
                     $wpml_lang_format = apply_filters(

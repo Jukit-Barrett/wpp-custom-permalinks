@@ -10,4 +10,6 @@ return array(
     'Symfony\\Polyfill\\Mbstring\\' => array($vendorDir . '/symfony/polyfill-mbstring'),
     'Symfony\\Component\\VarDumper\\' => array($vendorDir . '/symfony/var-dumper'),
     'Mrzkit\\WppCustomPermalinks\\' => array($baseDir . '/src'),
+    'Mrzkit\\SimpleDatabase\\' => array($vendorDir . '/mrzkit/simple-database/src'),
+    'Mrzkit\\SimpleDatabaseTest\\' => array($vendorDir . '/mrzkit/simple-database/test'),
 );

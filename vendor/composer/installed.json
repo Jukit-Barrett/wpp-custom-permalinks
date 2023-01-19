@@ -1,6 +1,54 @@
 {
     "packages": [
         {
+            "name": "mrzkit/simple-database",
+            "version": "v1.2.8",
+            "version_normalized": "1.2.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Kit-Mrz/simple-database.git",
+                "reference": "ba1f1d924cf24efe759b7e592609e9ce4757f4f2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Kit-Mrz/simple-database/zipball/ba1f1d924cf24efe759b7e592609e9ce4757f4f2",
+                "reference": "ba1f1d924cf24efe759b7e592609e9ce4757f4f2",
+                "shasum": ""
+            },
+            "require": {
+                "ext-pdo": "*"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^1.9",
+                "phpunit/phpunit": "8.5"
+            },
+            "time": "2023-01-18T10:07:21+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Mrzkit\\SimpleDatabase\\": "src/",
+                    "Mrzkit\\SimpleDatabaseTest\\": "test/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "shijie.zhu",
+                    "email": "kitgor.architect@gmail.com"
+                }
+            ],
+            "description": "simple database",
+            "support": {
+                "issues": "https://github.com/Kit-Mrz/simple-database/issues",
+                "source": "https://github.com/Kit-Mrz/simple-database/tree/v1.2.8"
+            },
+            "install-path": "../mrzkit/simple-database"
+        },
+        {
             "name": "symfony/polyfill-mbstring",
             "version": "v1.27.0",
             "version_normalized": "1.27.0.0",

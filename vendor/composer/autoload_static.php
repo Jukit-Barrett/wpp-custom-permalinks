@@ -22,6 +22,8 @@ class ComposerStaticInit22aad6c0a3e0aad2f5d98255d1af0a74
         'M' => 
         array (
             'Mrzkit\\WppCustomPermalinks\\' => 27,
+            'Mrzkit\\SimpleDatabase\\' => 22,
+            'Mrzkit\\SimpleDatabaseTest\\' => 26,
         ),
     );
 
@@ -41,6 +43,14 @@ class ComposerStaticInit22aad6c0a3e0aad2f5d98255d1af0a74
         'Mrzkit\\WppCustomPermalinks\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',
+        ),
+        'Mrzkit\\SimpleDatabase\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mrzkit/simple-database/src',
+        ),
+        'Mrzkit\\SimpleDatabaseTest\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mrzkit/simple-database/test',
         ),
     );
 

@@ -10,6 +10,15 @@
         'dev' => true,
     ),
     'versions' => array(
+        'mrzkit/simple-database' => array(
+            'pretty_version' => 'v1.2.8',
+            'version' => '1.2.8.0',
+            'reference' => 'ba1f1d924cf24efe759b7e592609e9ce4757f4f2',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../mrzkit/simple-database',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'mrzkit/wpp-custom-permalinks' => array(
             'pretty_version' => '1.0.0+no-version-set',
             'version' => '1.0.0.0',

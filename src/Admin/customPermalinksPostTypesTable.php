@@ -278,10 +278,7 @@ final class customPermalinksPostTypesTable extends \WP_List_Table
                 )
             );
 
-            $permalink = $cp_frontend->wpml_permalink_filter(
-                $custom_permalink,
-                $language_code
-            );
+            $permalink = $cp_frontend->wpml_permalink_filter( $custom_permalink, $language_code );
             $permalink = $cp_frontend->remove_double_slash($permalink);
             $perm_text = str_replace($home_url, '', $permalink);
 

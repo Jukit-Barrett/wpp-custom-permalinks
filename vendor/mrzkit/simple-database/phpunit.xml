@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         cacheResult="false"
+>
+    <testsuites>
+        <!-- 配置需要执行的测试 -->
+        <testsuite name="Unit">
+            <!-- 代表需要搜索测试的目录及元素 -->
+            <directory suffix="Test.php">./tests/Unit</directory>
+        </testsuite>
+    </testsuites>
+
+    <coverage processUncoveredFiles="true">
+        <!-- 配置要包含在代码覆盖率报告中的文件集合 -->
+        <include>
+            <directory suffix=".php">./src</directory>
+        </include>
+
+    </coverage>
+    <!-- 环境变量 -->
+    <php>
+        <server name="APP_ENV" value="testing"/>
+    </php>
+</phpunit>

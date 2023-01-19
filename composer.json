@@ -14,6 +14,7 @@
         }
     ],
     "require": {
-        "symfony/var-dumper": "^5.4"
+        "symfony/var-dumper": "^5.4",
+        "mrzkit/simple-database": "^1.2"
     }
 }
