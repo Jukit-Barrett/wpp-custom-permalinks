@@ -2,6 +2,8 @@
 
 namespace Mrzkit\WppCustomPermalinks;
 
+use Mrzkit\WppCustomPermalinks\Repository\PostsRepository;
+
 /**
  * 传递自定义链接的类，解析请求的URL并重定向
  */
@@ -125,6 +127,10 @@ class CustomPermalinksFrontend
      */
     private function query_post($requested_url)
     {
+        $repository = new PostsRepository();
+
+        return $repository->queryPost($requested_url);
+        
         global $wpdb;
 
         $cache_name = 'cp$_' . str_replace('/', '-', $requested_url) . '_#cp';

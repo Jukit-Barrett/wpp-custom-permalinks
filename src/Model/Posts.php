@@ -16,6 +16,11 @@ class Posts extends Model
      */
     protected $table = 'posts';
 
+    /**
+     * @desc 查询文章
+     * @param $requestedUrl
+     * @return array
+     */
     public function selectPosts($requestedUrl)
     {
         $requestedUrl = (string) $requestedUrl;
