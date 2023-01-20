@@ -35,10 +35,78 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
+use Mrzkit\SimpleDatabase\Capsule\DatabaseConfigContract;
+use Mrzkit\SimpleDatabase\Capsule\Manager as DB;
+
+if ( ! defined('ABSPATH' ) ) {
     exit;
 }
 
 require __DIR__ . '/vendor/autoload.php';
+
+class DbConfig implements DatabaseConfigContract {
+    /**
+     * @desc 数据库连接配置
+     * @return array
+     */
+    public function getConnectionConfig()
+    {
+        $config = [
+            'default'     => 'ali-rds',
+            'connections' => [
+                'ali-rds'     => [
+                    'name'      => 'ali-rds',
+                    'read'      => [
+                        'host' => [
+                            'mysql.kitgor.com',
+                            'mysql.kitgor.com',
+                        ],
+                    ],
+                    // 读写
+                    'write'     => [
+                        'host' => [
+                            'mysql.kitgor.com',
+                        ],
+                    ],
+                    'driver'    => 'mysql',
+                    'port'      => 3306,
+                    'database'  => 'wordpress_test',
+                    'username'  => 'root',
+                    'password'  => '123456',
+                    'charset'   => 'utf8',
+                    'collation' => 'utf8_unicode_ci',
+                    'prefix'    => 'th_',
+                ],
+                'tencent-rds' => [
+                    'name'      => 'tencent-rds',
+                    'read'      => [
+                        'host' => [
+                            'mysql.kitgor.com',
+                            'mysql.kitgor.com',
+                        ],
+                    ],
+                    // 读写
+                    'write'     => [
+                        'host' => [
+                            'mysql.kitgor.com',
+                        ],
+                    ],
+                    'driver'    => 'mysql',
+                    'port'      => 3306,
+                    'database'  => 'wordpress_test',
+                    'username'  => 'root',
+                    'password'  => '123456',
+                    'charset'   => 'utf8',
+                    'collation' => 'utf8_unicode_ci',
+                    'prefix'    => 'th_',
+                ],
+            ],
+        ];
+
+        return $config;
+    }
+}
+
+DB::resolverDatabaseConfig(DbConfig::class);
 
 new \Mrzkit\WppCustomPermalinks\CustomPermalinks(__FILE__);

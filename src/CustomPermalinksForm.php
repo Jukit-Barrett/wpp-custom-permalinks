@@ -2,6 +2,8 @@
 
 namespace Mrzkit\WppCustomPermalinks;
 
+use Mrzkit\WppCustomPermalinks\Repository\PostMetaRepository;
+
 /**
  * 在编辑帖子/类别上显示永久链接表单并保存的类
  */
@@ -354,8 +356,18 @@ class CustomPermalinksForm
             // custom permalink 自己提供的勾子
             $permalink = apply_filters('custom_permalink_before_saving', $permalink, $post_id);
 
+            // Kit Gor
+            $postMetaRepository = new PostMetaRepository();
+
+            $meta = $postMetaRepository->selectOneMetaKv('custom_permalink', $permalink);
+
+            if (empty($meta)) {
+                // 更新
+                update_post_meta($post_id, 'custom_permalink', $permalink);
+            }
+
             // 更新
-            update_post_meta($post_id, 'custom_permalink', $permalink);
+            //update_post_meta($post_id, 'custom_permalink', $permalink);
         }
     }
 

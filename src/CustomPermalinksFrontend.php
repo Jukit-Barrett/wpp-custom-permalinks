@@ -557,7 +557,6 @@ class CustomPermalinksFrontend
      */
     public function custom_post_link($permalink, $post)
     {
-
         // 获取 custom_permalink 数据
         $custom_permalink = get_post_meta($post->ID, 'custom_permalink', true);
         if ($custom_permalink) {
